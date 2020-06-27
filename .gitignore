@@ -1,0 +1,14 @@
+# Container passthrough
+container
+
+# Cypress
+cypress/screenshots
+cypress/videos
+cypress/reports
+
+# Istanbul
+.nyc_output
+coverage
+
+# Node modules
+node_modules

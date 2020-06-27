@@ -1,0 +1,45 @@
+{
+	"ignorePatterns": [
+		"dist/*",
+		"src/CuraEngine.js"
+	],
+	"parserOptions": {
+		"ecmaVersion": 10,
+		"sourceType": "module"
+	},
+	"rules": {
+		"arrow-parens": [
+			"warn",
+			"as-needed"
+		],
+		"brace-style": [
+			"warn",
+			"allman"
+		],
+		"camelcase": [
+			"warn",
+			{
+				"properties": "always"
+			}
+		],
+		"curly": "warn",
+		"no-var": "error",
+		"no-extra-semi": "error",
+		"object-curly-spacing": "warn",
+		"semi": "error",
+		"quotes": [
+			"warn",
+			"single"
+		],
+		"quote-props": [
+			"warn",
+			"consistent-as-needed"
+		],
+		"space-in-parens": "warn",
+		"prefer-const": "warn"
+	},
+	"env": {
+		"browser": true,
+		"node": true
+	}
+}

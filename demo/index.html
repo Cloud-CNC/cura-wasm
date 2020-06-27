@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <header>
+    <title>Cura WASM Demo</title>
+    <!--When serving with webpack-dev-server!-->
+    <script src="./es6/main.js" type="module"></script>
+
+    <!--Set the base for loading the WASM file-->
+    <base href="./es6/">
+    <style>
+      .inline {
+        display: inline;
+      }
+
+      html {
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+      }
+
+      ul {
+        list-style: none;
+      }
+    </style>
+  </header>
+
+  <body>
+    <h1>Cura WASM Demo</h1>
+
+    <ul>
+      <li>
+        <input accept=".stl" id="upload" type="file">
+        <input id="slice" value="Slice" type="button">
+      </li>
+      <br>
+      <li>
+        <span>
+          <progress id="progress" value="0" max="100"></progress>
+          <p class="inline" id="percent">0%</p>
+        </span>
+      </li>
+      <li>
+        <p id="time">Elapsed time: 0ms</p>
+      </li>
+      <li>
+        <input disabled id="download" value="Download GCODE" type="button">
+      </li>
+    </ul>
+  </body>
+
+</html>

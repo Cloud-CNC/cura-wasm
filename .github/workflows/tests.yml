@@ -1,0 +1,24 @@
+name: Tests
+on: push
+jobs:
+  build:
+    name: Test with Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [13, 14]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: stefanoeb/eslint-action@1.0.2
+        name: ESLint
+      - name: Install Modules
+        run: sudo npm ci --unsafe-perm=true --allow-root
+      - uses: paambaati/codeclimate-action@v2.6.0
+        name: Test
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
+        with:
+          coverageCommand: sudo npm run coverage
