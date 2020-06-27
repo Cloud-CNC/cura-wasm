@@ -1,5 +1,6 @@
 # Cura WASM
 ![status](https://img.shields.io/badge/status-release-brightgreen)
+[![tests](https://img.shields.io/github/workflow/status/Cloud-CNC/cura-wasm/Tests?label=tests)](https://github.com/Cloud-CNC/cura-wasm/actions)
 [![npm](https://img.shields.io/npm/v/cura-wasm)](https://npmjs.com/package/cura-wasm)
 [![issues](https://img.shields.io/github/issues/Cloud-CNC/cura-wasm)](https://github.com/Cloud-CNC/cura-wasm/issues)
 [![last commit](https://img.shields.io/github/last-commit/Cloud-CNC/cura-wasm)](https://github.com/Cloud-CNC/cura-wasm/commits/master)
