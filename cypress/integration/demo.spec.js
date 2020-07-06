@@ -4,7 +4,7 @@
  */
 
 /**
- * @function Hash raw using the specified algorithm
+ * Hash raw using the specified algorithm
  * @param {ArrayBuffer} raw
  * @param {string} algorithm
  */

@@ -51,7 +51,8 @@ const globalConfig = {
                   corejs: 3,
                   useBuiltIns: 'usage'
                 }
-              ]
+              ],
+              '@babel/preset-typescript'
             ]
           }
         }

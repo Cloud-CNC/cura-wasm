@@ -32,10 +32,7 @@ document.getElementById('slice').addEventListener('click', async () =>
   const stl = await window.getSTL();
 
   //Create a slicer
-  const slicer = new CuraWASM({
-    definition: 'ultimaker2',
-    overrides: window.overrides
-  });
+  const slicer = new CuraWASM();
 
   //Add progress handler
   slicer.on('progress', percent =>
