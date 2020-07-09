@@ -208,7 +208,7 @@ export default class CuraWASM extends EventEmitter
       }
 
       //Slice
-      this.log('Starting CuraEngine!');
+      this.log(`Starting CuraEngine with arguments: ${cliArguments.join(', ')}`);
       await this.worker.main(cliArguments);
 
       //Read file and return GCODE

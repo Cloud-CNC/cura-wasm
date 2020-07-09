@@ -18,14 +18,6 @@ const global = {
     'src/worker.ts'
   ],
   plugins: [
-    resolve({
-      browser: true,
-      preferBuiltins: false,
-      //Force Rollup to use the CJS version of Threads JS
-      mainFields: [
-        'main'
-      ]
-    }),
     json(),
     commonjs(),
     typescript({
@@ -38,8 +30,8 @@ const global = {
   ],
   onwarn: (warning, warn) =>
   {
-    //Hide eval warning from Emscripten
-    if (warning.code != 'EVAL')
+    //Hide eval warning from Emscripten and this -> undefined warning
+    if (warning.code != 'EVAL' && warning.code != 'THIS_IS_UNDEFINED')
     {
       warn(warning);
     }
@@ -51,22 +43,40 @@ const es = _.merge({
   output: [
     {
       dir: 'dist/es',
-      format: 'es',
-      name: 'CuraWASM'
+      format: 'es'
     }
   ]
 }, global);
+es.plugins.unshift(resolve({
+  browser: true,
+  preferBuiltins: false,
+  //Force Rollup to use the CJS version of Threads JS
+  mainFields: [
+    'main'
+  ]
+}));
 
 //CJS
 const cjs = _.merge({
+  external: [
+    'crypto',
+    'events',
+    'os',
+    'path',
+    'tty',
+    'util'
+  ],
   output: [
     {
       dir: 'dist/cjs',
       format: 'cjs',
-      name: 'CuraWASM'
+      //exports: 'named'
     }
   ]
 }, global);
+cjs.plugins.unshift(resolve({
+  preferBuiltins: true
+}));
 
 //Export
 export default [es, cjs];

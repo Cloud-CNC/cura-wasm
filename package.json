@@ -8,15 +8,18 @@
   "directories": {
     "test": "test"
   },
+  "files": [
+    "dist"
+  ],
   "browserslist": "> 0.25%, not dead",
   "scripts": {
     "build": "rollup -c",
+    "chart": "node assets/chart.js",
     "coverage": "npm run test:node && npm run test:browser && nyc report --reporter=lcov",
     "demo": "nollup -c demo/rollup.config.js --content-base demo",
     "test:browser:gui": "concurrently --kill-others --success first \"npm:demo\" \"cypress open\"",
     "test:browser": "concurrently --kill-others --success first \"npm:demo\" \"cypress run\"",
-    "test:node": "concurrently --kill-others --success first \"npm:build\" \"nyc --reporter=lcov mocha --colors --exit --timeout 60000 ./tests/index.js\"",
-    "tsc": "tsc"
+    "test:node": "npm run build && nyc --reporter=lcov mocha --colors --exit --timeout 60000 tests/node/index.js"
   },
   "repository": {
     "type": "git",

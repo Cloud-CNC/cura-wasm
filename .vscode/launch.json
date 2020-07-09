@@ -14,12 +14,12 @@
         "--exit",
         "--timeout",
         "60000",
-        "${workspaceFolder}/tests/index.js"
+        "${workspaceFolder}/tests/node/index.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "skipFiles": [
         "<node_internals>/**"
-      ]
+      ],
     }
   ]
 }

@@ -34,7 +34,7 @@ document.getElementById('slice').addEventListener('click', async () =>
   //Create a slicer
   const slicer = new CuraWASM({
     definition: 'ultimaker2',
-    verbose: true
+    overrides: window.overrides
   });
 
   //Add progress handler

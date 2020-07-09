@@ -3,6 +3,7 @@
  */
 
 //Imports
+const path = require('path');
 const quickchart = require('quickchart-js');
 
 //Instantiate a new quickchart
@@ -81,7 +82,4 @@ chart.setWidth(1000);
 chart.setHeight(600);
 
 //Get the URL
-chart.getShortUrl().then(url =>
-{
-  console.log(url);
-});
+chart.toFile(path.resolve('assets/chart.png'));

@@ -62,8 +62,6 @@ const worker = {
 
       const path = `definitions/${definition}.def.json`;
 
-      console.log(`Added: ${path}`);
-
       //Copy file to memory filesystem
       engine.FS.writeFile(path, JSON.stringify(definitions[definition]));
     }

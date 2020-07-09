@@ -1,10 +1,10 @@
 /**
- * @fileoverview Normal Cura WASM Tests
+ * @fileoverview Cura WASM With Overrides Tests
  */
 
 //Imports
 const {expect} = require('chai');
-const CuraWASM = require('../dist/cjs/index').default;
+const CuraWASM = require('../../dist/cjs/index');
 const fs = require('fs');
 const crypto = require('crypto');
 
@@ -24,13 +24,21 @@ const stl = fs.readFileSync('./demo/benchy.stl').buffer;
 //Export
 module.exports = () =>
 {
-  it('will slice the file', async () =>
+  it('will slice the file with overrides', async () =>
   {
-    const slicer = new CuraWASM();
+    const slicer = new CuraWASM({
+      definition: 'ultimaker2',
+      overrides: [
+        {
+          key: 'mesh_position_x',
+          value: '20'
+        }
+      ]
+    });
 
     const gcode = await slicer.slice(stl);
 
-    expect(hash(gcode)).to.equal('a0b0247aa8657e5d0d4d7daf9c63b149568f22e2a2fe35af7ff268120f3afa88');
+    expect(hash(gcode)).to.equal('4d15c9f7a04b9a465b5b99cca9f39f283fc248eba0edc6c529738d38963254a1');
 
     await slicer.destroy();
   });
