@@ -7,6 +7,7 @@ import CuraEngine from './CuraEngine.js';
 import definitions from './definitions/index';
 import {Observable} from 'observable-fns';
 import {expose, Transfer, TransferDescriptor} from 'threads';
+import type {definitionsType} from './types';
 
 /**
  * `EmscriptenModule` with a few tweaks
@@ -37,7 +38,7 @@ const worker = {
       printErr: undefined
     };
 
-    if (verbose)
+    if (!verbose)
     {
       config.print = () => null;
       config.printErr = () => null;
@@ -54,16 +55,18 @@ const worker = {
   {
     engine.FS.mkdir('/definitions');
 
-    Object.keys(definitions).forEach(rawDefinition =>
+    for (const rawDefinition in definitions)
     {
       //Cast raw definition type
       const definition = <keyof typeof definitions>rawDefinition;
 
       const path = `definitions/${definition}.def.json`;
 
+      console.log(`Added: ${path}`);
+
       //Copy file to memory filesystem
       engine.FS.writeFile(path, JSON.stringify(definitions[definition]));
-    });
+    }
   },
 
   /**
@@ -130,10 +133,11 @@ const worker = {
 
   /**
    * Remove the 3D printer definition files from the virtual file system
+   * @param _definitions The printer definitions to remove
    */
   async removeDefinitions(): Promise<void>
   {
-    Object.keys(definitions).forEach(rawDefinition =>
+    for (const rawDefinition in definitions)
     {
       //Cast raw definition type
       const definition = <keyof typeof definitions>rawDefinition;
@@ -142,7 +146,7 @@ const worker = {
 
       //Copy file to memory filesystem
       engine.FS.unlink(path);
-    });
+    }
 
     engine.FS.rmdir('/definitions');
   }

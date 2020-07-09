@@ -4,7 +4,7 @@
 
 //Imports
 const {expect} = require('chai');
-const CuraWASM = require('../dist/node/main').default;
+const CuraWASM = require('../dist/cjs/index').default;
 const fs = require('fs');
 const crypto = require('crypto');
 

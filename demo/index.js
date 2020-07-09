@@ -3,7 +3,7 @@
  */
 
 //Imports
-import CuraWASM from '../src/index';
+import CuraWASM from '../src/index.ts';
 
 //Getters and handlers (These are overwritten by Cypress)
 window.getSTL = async () =>
@@ -32,7 +32,10 @@ document.getElementById('slice').addEventListener('click', async () =>
   const stl = await window.getSTL();
 
   //Create a slicer
-  const slicer = new CuraWASM();
+  const slicer = new CuraWASM({
+    definition: 'ultimaker2',
+    verbose: true
+  });
 
   //Add progress handler
   slicer.on('progress', percent =>

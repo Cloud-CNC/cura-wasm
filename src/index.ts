@@ -3,26 +3,21 @@
  */
 
 //Imports
-import definitions from './definitions/index';
-import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
 import {EventEmitter} from 'events';
 import {spawn, Thread, Transfer, Worker} from 'threads';
 import {v4 as uuid} from 'uuid';
-import type StrictEventEmitter from 'strict-event-emitter-types';
+import type {definitionsType} from './types';
+import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
+
+/**
+ * Default printer definition
+ */
+const defaultDefinition: definitionsType = 'fdmprinter';
 
 /**
  * Duplicate definition of non-exported ArbitraryThreadType from threads/dist/master/spawn.d.ts
  */
 declare type ArbitraryThreadType = FunctionThread<any, any> & ModuleThread<any>;
-
-interface events
-{
-  /**
-   * Emitted when Cura Engine updates its progress
-   * @param percent Percent ranging from 0 to 100 (Inclusive)
-   */
-  progress: (percent: number) => void
-}
 
 /**
  * Configuration for Cura WASM
@@ -34,12 +29,12 @@ interface config
    * 
    * Default: `fdmprinter`
    */
-  definition?: keyof typeof definitions,
+  definition: definitionsType,
 
   /**
    * Overrides for the specified 3D printer definition
    */
-  overrides?: {
+  overrides: {
     /**
      * The scope of the override
      *
@@ -49,17 +44,17 @@ interface config
      * the override will apply to the corresponding extruder. Counting is
      * zero based, so the first extruder is `e0`
      */
-    scope?: string,
+    scope: string,
 
     /**
      * The property to override
      */
-    key?: string,
+    key: string,
 
     /**
      * The value to override with
      */
-    value?: string
+    value: string
   }[],
 
   /**
@@ -71,7 +66,7 @@ interface config
 /**
  * @class Cura compiled to Web Assembly (WASM)
  */
-export default class CuraWASM extends (EventEmitter as {new(): StrictEventEmitter<EventEmitter, events>})
+export default class CuraWASM extends EventEmitter
 {
   /**
    * Consumer provided configuration for Cura WASM
@@ -95,24 +90,21 @@ export default class CuraWASM extends (EventEmitter as {new(): StrictEventEmitte
   //@ts-ignore: Complains about worker not being assigned in constructor
   private worker: ArbitraryThreadType;
 
-  constructor(config: config)
+  constructor(config: Partial<config>)
   {
     super();
 
-    //Store config
-    this.config = config;
+    //Store config with defaults
+    this.config = {
+      definition: defaultDefinition,
+      overrides: [],
+      verbose: false,
+      ...config
+    };
 
     this.loaded = false;
 
     this.oldProgress = 0;
-
-    //Defaults
-    this.config = {
-      definition: 'fdmprinter',
-      overrides: [],
-      verbose: false,
-      ...this.config
-    };
   }
 
   /**
@@ -121,7 +113,8 @@ export default class CuraWASM extends (EventEmitter as {new(): StrictEventEmitte
   private async load(): Promise<void>
   {
     //Initialize worker
-    this.worker = await spawn(new Worker('./worker.js'));
+    this.worker = await spawn(new Worker('./worker.ts'));
+
     await this.worker.initialize(this.config.verbose);
     this.log('Initialized worker!');
 
