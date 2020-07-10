@@ -3,10 +3,14 @@
 		"dist/*",
 		"src/CuraEngine.js"
 	],
+	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": 10,
 		"sourceType": "module"
 	},
+	"plugins": [
+		"@typescript-eslint"
+	],
 	"rules": {
 		"arrow-parens": [
 			"warn",

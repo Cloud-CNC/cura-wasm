@@ -61,7 +61,7 @@ interface config
    * Wether to enable verbose logging or not (Useful for debugging)
    */
   verbose?: boolean
-};
+}
 
 /**
  * @class Cura compiled to Web Assembly (WASM)

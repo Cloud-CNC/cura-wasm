@@ -16,7 +16,7 @@ interface EmscriptenModule2 extends EmscriptenModule
 {
   callMain(args: string[]): void,
   FS: typeof FS
-};
+}
 
 //Instance variables
 let engine: EmscriptenModule2;

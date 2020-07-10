@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /**
  * @fileoverview 3D printer definitions
  * 
