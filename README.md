@@ -4,6 +4,7 @@
 [![npm](https://img.shields.io/npm/v/cura-wasm)](https://npmjs.com/package/cura-wasm)
 [![issues](https://img.shields.io/github/issues/Cloud-CNC/cura-wasm)](https://github.com/Cloud-CNC/cura-wasm/issues)
 [![last commit](https://img.shields.io/github/last-commit/Cloud-CNC/cura-wasm)](https://github.com/Cloud-CNC/cura-wasm/commits/master)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm?ref=badge_shield)
 
 Cura Engine powered by Web Assembly (WASM).
 
@@ -107,3 +108,6 @@ main();
 
 ### Low level API
 If you want more finite control over Cura WASM, consider interacting with the worker ([`worker.js`](./src/worker.js)) and bypassing the normal [`CuraWASM`](./src/index.js) class. This allows finite control over the command line arguments passed to Cura Engine, direct file I/O, and more; you'll need to re-implement some of the worker management found in the CuraWASM class though. If that's not low enough, consider directly importing [`CuraEngine.js`](./src/CuraEngine.js) (Which is directly built by Emscripten); be warned: it will choke up the calling thread hence the need for Threads JS.
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm?ref=badge_large)
