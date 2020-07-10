@@ -4,6 +4,20 @@
  */
 
 /**
+ * Handle gcode output and verify its hash
+ * @param {string} referenceHash The reference hash to compare the outputted file against
+ * @param {Function} done Mocha done callback
+ */
+const handleGcode = (referenceHash, done) => async gcode =>
+{
+  expect(gcode.byteLength).to.be.greaterThan(0);
+
+  expect(await hash(gcode)).to.equal(referenceHash);
+
+  done();
+};
+
+/**
  * Hash raw using the specified algorithm
  * @param {ArrayBuffer} raw
  * @param {string} algorithm
@@ -48,15 +62,8 @@ describe('demo', () =>
     //Mocks
     cy.window().then(window =>
     {
-      window.handleGcode = async gcode =>
-      {
-        expect(gcode.byteLength).to.be.greaterThan(0);
+      window.handleGcode = handleGcode('a0b0247aa8657e5d0d4d7daf9c63b149568f22e2a2fe35af7ff268120f3afa88', done);
 
-        expect(await hash(gcode)).to.equal('a0b0247aa8657e5d0d4d7daf9c63b149568f22e2a2fe35af7ff268120f3afa88');
-
-        done();
-      };
-      
       //Slice
       cy.get('#slice').click();
       cy.progressIncreases('#percent');
@@ -69,14 +76,7 @@ describe('demo', () =>
     //Mocks
     cy.window().then(window =>
     {
-      window.handleGcode = async gcode =>
-      {
-        expect(gcode.byteLength).to.be.greaterThan(0);
-
-        expect(await hash(gcode)).to.equal('4d15c9f7a04b9a465b5b99cca9f39f283fc248eba0edc6c529738d38963254a1');
-
-        done();
-      };
+      window.handleGcode = handleGcode('4d15c9f7a04b9a465b5b99cca9f39f283fc248eba0edc6c529738d38963254a1', done);
 
       window.overrides = [
         {

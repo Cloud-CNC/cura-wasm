@@ -54,24 +54,6 @@ const global = {
   }
 };
 
-//ES
-const es = _.merge({
-  output: [
-    {
-      dir: 'dist/es',
-      format: 'es'
-    }
-  ]
-}, global);
-es.plugins.unshift(resolve({
-  browser: true,
-  preferBuiltins: false,
-  //Force Rollup to use the CJS version of Threads JS
-  mainFields: [
-    'main'
-  ]
-}));
-
 //CJS
 const cjs = _.merge({
   external: [
@@ -93,5 +75,23 @@ cjs.plugins.unshift(resolve({
   preferBuiltins: true
 }));
 
+//ES
+const es = _.merge({
+  output: [
+    {
+      dir: 'dist/es',
+      format: 'es'
+    }
+  ]
+}, global);
+es.plugins.unshift(resolve({
+  browser: true,
+  preferBuiltins: false,
+  //Force Rollup to use the CJS version of Threads JS
+  mainFields: [
+    'main'
+  ]
+}));
+
 //Export
-export default [es, cjs];
+export default [cjs, es];

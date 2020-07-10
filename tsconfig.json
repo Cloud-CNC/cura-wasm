@@ -16,6 +16,7 @@
   ],
   "exclude": [
     "src/main-cjs.js",
-    "src/main-es.js"
+    "src/main-es.js",
+    "src/definitions/generator.js"
   ]
 }
