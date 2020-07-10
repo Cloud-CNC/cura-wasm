@@ -1,6 +1,9 @@
 # Container passthrough
 container
 
+# Build
+dist
+
 # Cypress
 tests/web/screenshots
 tests/web/videos
