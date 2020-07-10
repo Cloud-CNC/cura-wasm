@@ -3,7 +3,7 @@
  */
 
 //Imports
-import CuraWASM from '../src/index.ts';
+import {CuraWASM} from '../src/index.ts';
 
 //Getters and handlers (These are overwritten by Cypress)
 window.getSTL = async () =>

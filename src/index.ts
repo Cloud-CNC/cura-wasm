@@ -66,7 +66,7 @@ interface config
 /**
  * @class Cura compiled to Web Assembly (WASM)
  */
-export default class CuraWASM extends EventEmitter
+export class CuraWASM extends EventEmitter
 {
   /**
    * Consumer provided configuration for Cura WASM

@@ -2,14 +2,15 @@
   "name": "cura-wasm",
   "version": "1.0.0",
   "description": "Cura Engine powered by Web Assembly (WASM)",
-  "main": "dist/node/main.js",
-  "module": "dist/es6/main.js",
+  "main": "dist/cjs/main.js",
+  "module": "dist/es/main.js",
   "types": "dist/types/index.d.ts",
   "directories": {
     "test": "test"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "browserslist": "> 0.25%, not dead",
   "scripts": {
@@ -66,6 +67,7 @@
     "nyc": "^15.1.0",
     "quickchart-js": "^1.0.2",
     "rollup": "^2.21.0",
+    "rollup-plugin-copy": "^3.3.0",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "typescript": "^3.9.6"

@@ -13,5 +13,9 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "src/main-cjs.js",
+    "src/main-es.js"
   ]
 }

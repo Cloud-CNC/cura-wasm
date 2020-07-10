@@ -6,6 +6,7 @@
 import _ from 'lodash';
 import {terser} from 'rollup-plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
+import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
@@ -26,7 +27,22 @@ const global = {
     replace({
       'worker.ts': 'worker.js'
     }),
-    terser()
+    terser(),
+    copy({
+      //Re-exports
+      targets: [
+        {
+          src: 'src/main-cjs.js',
+          dest: 'dist/cjs/',
+          rename: 'main.js'
+        },
+        {
+          src: 'src/main-es.js',
+          dest: 'dist/es/',
+          rename: 'main.js'
+        }
+      ]
+    })
   ],
   onwarn: (warning, warn) =>
   {
@@ -69,8 +85,7 @@ const cjs = _.merge({
   output: [
     {
       dir: 'dist/cjs',
-      format: 'cjs',
-      //exports: 'named'
+      format: 'cjs'
     }
   ]
 }, global);
