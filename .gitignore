@@ -1,10 +1,13 @@
 # Container passthrough
 container
 
+# Build
+dist
+
 # Cypress
-cypress/screenshots
-cypress/videos
-cypress/reports
+tests/web/screenshots
+tests/web/videos
+tests/web/reports
 
 # Istanbul
 .nyc_output

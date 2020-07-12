@@ -4,12 +4,12 @@
 
 //Imports
 const {expect} = require('chai');
-const CuraWASM = require('../dist/node/main').default;
+const CuraWASM = require('../../dist/cjs/main');
 const fs = require('fs');
 const crypto = require('crypto');
 
 /**
- * @function Hash raw using the specified algorithm
+ * Hash raw using the specified algorithm
  * @param {ArrayBuffer} raw
  * @param {string} algorithm
  */
@@ -26,7 +26,9 @@ module.exports = () =>
 {
   it('will slice the file', async () =>
   {
-    const slicer = new CuraWASM();
+    const slicer = new CuraWASM({
+      definition: 'ultimaker2'
+    });
 
     const gcode = await slicer.slice(stl);
 
