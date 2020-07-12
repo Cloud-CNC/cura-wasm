@@ -40,7 +40,8 @@ jobs:
     - name: Publish to NPM
       uses: pascalgn/npm-publish-action@1.2.0
       with:
-        commit_pattern: "^v(\\S+)"
+        #See https://regexr.com/589ii for more information
+        commit_pattern: "^v?(\\d\\.\\d\\.\\d(?:-(?:alpha|beta))?)$"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
