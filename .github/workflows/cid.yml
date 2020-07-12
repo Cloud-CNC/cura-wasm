@@ -39,6 +39,8 @@ jobs:
       run: npm run build
     - name: Publish to NPM
       uses: pascalgn/npm-publish-action@1.2.0
+      with:
+        commit_pattern: "^v(\\S+)"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
