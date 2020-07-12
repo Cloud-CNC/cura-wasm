@@ -1,9 +1,10 @@
 {
   "baseUrl": "http://localhost:8080",
+  "defaultCommandTimeout": 10000,
   "fixturesFolder": "tests/web/fixtures",
   "integrationFolder": "tests/web/integration",
   "pluginsFile": "tests/web/plugins/index.js",
   "screenshotsFolder": "tests/web/screenshots",
-  "videosFolder": "tests/web/videos",
-  "supportFile": "tests/web/support/index.js"
+  "supportFile": "tests/web/support/index.js",
+  "videosFolder": "tests/web/videos"
 }
