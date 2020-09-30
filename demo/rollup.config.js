@@ -4,17 +4,19 @@
 
 //Imports
 import {terser} from 'rollup-plugin-terser';
+import bundleImports from 'rollup-plugin-bundle-imports';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript2';
 
 //Export
 module.exports = {
   input: [
-    'demo/index.js',
-    'src/worker.ts'
+    'demo/index.js'
+  ],
+  output: [
+    {}
   ],
   plugins: [
     resolve({
@@ -30,18 +32,15 @@ module.exports = {
     typescript({
       rollupCommonJSResolveHack: true
     }),
-    replace({
-      'worker.ts': 'worker.js'
+    bundleImports({
+      include: '**/worker.ts'
     }),
     terser()
-  ],
-  output: [
-    {}
   ],
   onwarn: (warning, warn) =>
   {
     //Hide eval warning from Emscripten
-    if (warning.code != 'EVAL')
+    if (warning.code != 'EVAL' && warning.code != 'THIS_IS_UNDEFINED')
     {
       warn(warning);
     }

@@ -4,10 +4,13 @@
 
 //Imports
 import {EventEmitter} from 'events';
-import {spawn, Thread, Transfer, Worker} from 'threads';
+import {BlobWorker, spawn, Thread, Transfer} from 'threads';
 import {v4 as uuid} from 'uuid';
 import type {definitionsType} from './types';
 import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
+
+//@ts-ignore Import worker (Bundled with `rollup-plugin-bundle-imports`)
+import WorkerText from './worker';
 
 /**
  * Default printer definition
@@ -113,7 +116,8 @@ export class CuraWASM extends EventEmitter
   private async load(): Promise<void>
   {
     //Initialize worker
-    this.worker = await spawn(new Worker('./worker.ts'));
+    console.log(BlobWorker);
+    this.worker = await spawn(BlobWorker.fromText(WorkerText));
 
     await this.worker.initialize(this.config.verbose);
     this.log('Initialized worker!');
