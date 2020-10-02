@@ -7,7 +7,6 @@ import CuraEngine from './CuraEngine.js';
 import definitions from './definitions/index';
 import {Observable} from 'observable-fns';
 import {expose, Transfer, TransferDescriptor} from 'threads';
-import type {definitionsType} from './types';
 
 /**
  * `EmscriptenModule` with a few tweaks

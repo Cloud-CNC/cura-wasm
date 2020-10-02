@@ -116,7 +116,6 @@ export class CuraWASM extends EventEmitter
   private async load(): Promise<void>
   {
     //Initialize worker
-    console.log(BlobWorker);
     this.worker = await spawn(BlobWorker.fromText(WorkerText));
 
     await this.worker.initialize(this.config.verbose);

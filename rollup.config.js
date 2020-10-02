@@ -4,11 +4,11 @@
 
 //Imports
 import {terser} from 'rollup-plugin-terser';
-import bundleImports from 'rollup-plugin-bundle-imports';
 import commonjs from '@rollup/plugin-commonjs';
 import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
+import threads from 'rollup-plugin-threads';
 import typescript from 'rollup-plugin-typescript2';
 
 const onwarn = (warning, warn) =>
@@ -23,6 +23,7 @@ const onwarn = (warning, warn) =>
 //CJS
 const cjs = {
   external: [
+    'child_process',
     'crypto',
     'events',
     'os',
@@ -35,21 +36,35 @@ const cjs = {
   ],
   plugins: [
     resolve({
-      browser: true,
+      browser: false,
       preferBuiltins: true,
+      //Force Rollup to use the CJS version of Threads JS
       mainFields: [
         'main'
       ]
     }),
     json(),
     commonjs(),
-    typescript({
-      rollupCommonJSResolveHack: true
+    typescript(),
+    threads({
+      external: [
+        'child_process',
+        'crypto',
+        'events',
+        'os',
+        'path',
+        'tty',
+        'util'
+      ],
+      include: '**/worker.ts',
+      plugins: [
+        resolve(),
+        json(),
+        commonjs(),
+        typescript()
+      ]
     }),
-    bundleImports({
-      include: '**/worker.ts'
-    }),
-    terser(),
+    //terser(),
     copy({
       //Re-exports
       targets: [
@@ -86,11 +101,18 @@ const es = {
     }),
     json(),
     commonjs(),
-    typescript({
-      rollupCommonJSResolveHack: true
-    }),
-    bundleImports({
-      include: '**/worker.ts'
+    typescript(),
+    threads({
+      include: '**/worker.ts',
+      plugins: [
+        resolve({
+          browser: true,
+          preferBuiltins: false
+        }),
+        json(),
+        commonjs(),
+        typescript()
+      ]
     }),
     terser(),
     copy({

@@ -4,10 +4,10 @@
 
 //Imports
 import {terser} from 'rollup-plugin-terser';
-import bundleImports from 'rollup-plugin-bundle-imports';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
+import threads from 'rollup-plugin-threads';
 import typescript from 'rollup-plugin-typescript2';
 
 //Export
@@ -29,11 +29,18 @@ module.exports = {
     }),
     json(),
     commonjs(),
-    typescript({
-      rollupCommonJSResolveHack: true
-    }),
-    bundleImports({
-      include: '**/worker.ts'
+    typescript(),
+    threads({
+      include: '**/worker.ts',
+      plugins: [
+        resolve({
+          browser: true,
+          preferBuiltins: false
+        }),
+        json(),
+        commonjs(),
+        typescript()
+      ]
     }),
     terser()
   ],
