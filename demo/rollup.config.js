@@ -6,15 +6,17 @@
 import {terser} from 'rollup-plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
+import threads from 'rollup-plugin-threads';
 import typescript from 'rollup-plugin-typescript2';
 
 //Export
 module.exports = {
   input: [
-    'demo/index.js',
-    'src/worker.ts'
+    'demo/index.js'
+  ],
+  output: [
+    {}
   ],
   plugins: [
     resolve({
@@ -27,21 +29,25 @@ module.exports = {
     }),
     json(),
     commonjs(),
-    typescript({
-      rollupCommonJSResolveHack: true
-    }),
-    replace({
-      'worker.ts': 'worker.js'
+    typescript(),
+    threads({
+      include: '**/worker.ts',
+      plugins: [
+        resolve({
+          browser: true,
+          preferBuiltins: false
+        }),
+        json(),
+        commonjs(),
+        typescript()
+      ]
     }),
     terser()
-  ],
-  output: [
-    {}
   ],
   onwarn: (warning, warn) =>
   {
     //Hide eval warning from Emscripten
-    if (warning.code != 'EVAL')
+    if (warning.code != 'EVAL' && warning.code != 'THIS_IS_UNDEFINED')
     {
       warn(warning);
     }
