@@ -24,7 +24,6 @@ const onwarn = (warning, warn) =>
 const cjs = {
   external: [
     'child_process',
-    'crypto',
     'events',
     'os',
     'path',
@@ -48,8 +47,7 @@ const cjs = {
     typescript(),
     threads({
       external: [
-        'child_process',
-        'crypto',
+        'child_process',,
         'events',
         'os',
         'path',
@@ -64,7 +62,7 @@ const cjs = {
         typescript()
       ]
     }),
-    //terser(),
+    terser(),
     copy({
       //Re-exports
       targets: [

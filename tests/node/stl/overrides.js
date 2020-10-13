@@ -4,22 +4,12 @@
 
 //Imports
 const {expect} = require('chai');
-const CuraWASM = require('../../dist/cjs/main');
+const {hash} = require('../utils');
+const CuraWASM = require('../../../dist/cjs/main');
 const fs = require('fs');
-const crypto = require('crypto');
 
-/**
- * Hash raw using the specified algorithm
- * @param {ArrayBuffer} raw
- * @param {string} algorithm
- */
-const hash = (raw, algorithm = 'sha256') =>
-{
-  return crypto.createHash(algorithm).update(new Uint8Array(raw)).digest('hex');
-};
-
-//Get the STL
-const stl = fs.readFileSync('./demo/benchy.stl').buffer;
+//Get the file
+const file = fs.readFileSync('./demo/benchy.stl').buffer;
 
 //Export
 module.exports = () =>
@@ -36,9 +26,9 @@ module.exports = () =>
       ]
     });
 
-    const gcode = await slicer.slice(stl);
+    const gcode = await slicer.slice(file, 'stl');
 
-    expect(stl.byteLength).to.be.equal(0);
+    expect(file.byteLength).to.be.equal(0);
 
     expect(hash(gcode)).to.equal('4d15c9f7a04b9a465b5b99cca9f39f283fc248eba0edc6c529738d38963254a1');
 

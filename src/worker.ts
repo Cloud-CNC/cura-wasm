@@ -3,10 +3,14 @@
  */
 
 //Imports
+import {convert} from './file';
+import {definitionsType, override} from './types';
+import {expose, Transfer, TransferDescriptor} from 'threads';
+import {generate} from './arguments';
+import {Observable} from 'observable-fns';
+import {Observer} from 'observable-fns/dist/observable';
 import CuraEngine from './CuraEngine.js';
 import definitions from './definitions/index';
-import {Observable} from 'observable-fns';
-import {expose, Transfer, TransferDescriptor} from 'threads';
 
 /**
  * `EmscriptenModule` with a few tweaks
@@ -19,6 +23,7 @@ interface EmscriptenModule2 extends EmscriptenModule
 
 //Instance variables
 let engine: EmscriptenModule2;
+let proxyObserver: Observer<any>;
 
 /**
  * Cura WASM's low-level singleton for interfacing with Cura Engine
@@ -66,71 +71,103 @@ const worker = {
     }
   },
 
-  /**
-   * Add the file to the virtual filesystem
-   * @param path The path to the file
-   * @param data The raw data to write to the file
-   */
-  async addFile(path: string, data: ArrayBuffer): Promise<void>
+  observeProgress: () => new Observable(observer =>
   {
-    //Convert the ThreadJS transferable (ArrayBuffer) to a Uint8Array
-    const bytes = new Uint8Array(data);
-
-    //Write the file
-    engine.FS.writeFile(path, bytes);
-  },
+    proxyObserver = observer;
+  }),
 
   /**
-   * Observes the callback when the [name] function is called with respect to the globalThis context
-   * @param name The name of the function
+   * Run Cura
+   * @param definition The printer definition
+   * @param overrides Cura overrides
+   * @param verbose Wether or not to enable verbose logging in Cura
+   * @param file The file
+   * @param extension The file extension
+   * @param progress The progress event handler
    */
-  observeCallback(name: string): Observable<any>
+  async run(definition: definitionsType, overrides: override[] | null, verbose: boolean | null, file: ArrayBuffer, extension: string): Promise<TransferDescriptor | Error>
   {
-    //Return an "observable" (EventEmitter++)
-    return new Observable(observer =>
+    /**
+     * The bias of the file converter progress (Range: 0-1)
+     * 
+     * A higher value indicates more time is usually taken
+     * by the file converter and less time by the slicer
+     */
+    const converterBias = 0.3;
+
+    /**
+     * The bias of the slicer progress
+     * 
+     * Percent inverse of the file converter bias
+     */
+    const slicerBias = 1 - converterBias;
+
+    //Convert the file to an STL
+    const stl = await convert(file, extension, converterProgress =>
     {
-      //@ts-ignore: Complains about indexing globalThis with a string
-      globalThis[name] = (param: any) =>
+      //Emit progress
+      if (proxyObserver != null && proxyObserver.next != null)
       {
-        observer.next(param);
-      };
+        proxyObserver.next(converterProgress * converterBias);
+      }
     });
-  },
 
-  /**
-   * Call the main function
-   * @param cliArguments Command line arguments to be passed to Cura Engine
-   */
-  async main(cliArguments: string[]): Promise<void>
-  {
-    engine.callMain(cliArguments);
-  },
+    //Handle errors
+    if (stl instanceof Error)
+    {
+      return stl;
+    }
+    else
+    {
+      //Write the file
+      engine.FS.writeFile('Model.stl', stl);
 
-  /**
-   * Retrieves a file
-   * @param path Path to the file
-   */
-  async getFile(path: string): Promise<TransferDescriptor>
-  {
-    //Read the file (Uint8Array) and convert to an ArrayBuffer
-    const bytes = engine.FS.readFile(path).buffer;
+      //Generate the progress handler callback name
+      const progressHandlerName = 'cura-wasm-progress-callback';
 
-    //Return a ThreadJS transferable (ArrayBuffer)
-    return Transfer(bytes);
-  },
+      let previousSlicerProgress = 0;
 
-  /**
-   * Remove the file from the virtual filesystem
-   * @param path
-   */
-  async removeFile(path: string): Promise<void>
-  {
-    engine.FS.unlink(path);
+      //@ts-ignore Register the progress handler (The globalThis context is hard coded into Cura; you'll have to recompile it to change this)
+      globalThis[progressHandlerName] = (slicerProgress: number) =>
+      {
+        //Round the slicer progress
+        slicerProgress = Math.round(100 * slicerProgress) / 100;
+
+        if (slicerProgress != previousSlicerProgress)
+        {
+          //Emit progress
+          if (proxyObserver != null && proxyObserver.next != null)
+          {
+            proxyObserver.next((slicerProgress * slicerBias) + converterBias);
+          }
+
+          previousSlicerProgress = slicerProgress;
+        }
+      };
+
+      //Generate CLI arguments
+      const args = generate(progressHandlerName, definition, overrides, verbose);
+
+      //Run Cura (Blocking)
+      engine.callMain(args);
+
+      //@ts-ignore Delete the progress handler
+      delete globalThis[progressHandlerName];
+
+      //Read the file (Uint8Array) and convert to an ArrayBuffer
+      const gcode = engine.FS.readFile('Model.gcode').buffer;
+
+      //Remove the files
+      engine.FS.unlink('Model.stl');
+      engine.FS.unlink('Model.gcode');
+
+      //Return a ThreadJS transferable (ArrayBuffer)
+      return Transfer(gcode);
+    }
   },
 
   /**
    * Remove the 3D printer definition files from the virtual file system
-   * @param _definitions The printer definitions to remove
    */
   async removeDefinitions(): Promise<void>
   {

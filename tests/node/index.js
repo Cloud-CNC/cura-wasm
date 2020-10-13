@@ -6,9 +6,8 @@
 console.warn('FYI: You must build Cura WASM before running tests!');
 
 //Tests
-describe('demo', () =>
+describe('cura wasm', () =>
 {
-  require('./normal')();
-  require('./clone')();
-  require('./overrides')();
+  describe('stl', require('./stl/index'));
+  describe('3mf', require('./3mf/index'));
 });

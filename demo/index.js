@@ -4,11 +4,20 @@
 
 //Imports
 import {CuraWASM} from '../src/index.ts';
+import {FileFormats} from 'unified-3d-loader';
+
+//Update file input accept attribute
+const extensions = [];
+for (const format of Object.values(FileFormats))
+{
+  extensions.push(...format.extensions.map(extension => `.${extension}`));
+}
+document.getElementById('upload').accept = extensions;
 
 //Getters and handlers (These are overwritten by Cypress)
-window.getSTL = async () =>
+window.getFile = async () =>
 {
-  return await document.getElementById('upload').files[0].arrayBuffer();
+  return await document.getElementById('upload').files[0];
 };
 
 window.handleGcode = async gcode =>
@@ -25,19 +34,21 @@ window.handleGcode = async gcode =>
   link.remove();
 };
 
-window.transferSTL = true;
+window.transferFile = true;
 
 //Upload
 document.getElementById('slice').addEventListener('click', async () =>
 {
-  //Get the STL
-  const stl = await window.getSTL();
+  //Get the file
+  const file = await window.getFile();
+  const bytes = await file.arrayBuffer();
+  const extension = file.name.split('.').pop();
 
   //Create a slicer
   const slicer = new CuraWASM({
     definition: 'ultimaker2',
     overrides: window.overrides,
-    transfer: window.transferSTL
+    transfer: window.transferFile
   });
 
   //Add progress handler
@@ -49,11 +60,11 @@ document.getElementById('slice').addEventListener('click', async () =>
 
   //Slice
   const start = Date.now();
-  const gcode = await slicer.slice(stl);
+  const gcode = await slicer.slice(bytes, extension);
   const end = Date.now();
 
   //Used by E2E tests
-  window.afterSTL = stl;
+  window.afterFile = bytes;
 
   //Calculate elapsed time
   const elapsed = new Date(end - start);

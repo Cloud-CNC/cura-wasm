@@ -3,10 +3,9 @@
  */
 
 //Imports
-import {EventEmitter} from 'events';
 import {BlobWorker, spawn, Thread, Transfer} from 'threads';
-import {v4 as uuid} from 'uuid';
-import type {definitionsType} from './types';
+import {EventEmitter} from 'events';
+import type {definitionsType, override} from './types';
 import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
 
 //@ts-ignore Import worker (Bundled with `rollup-plugin-bundle-imports`)
@@ -37,28 +36,7 @@ interface config
   /**
    * Overrides for the specified 3D printer definition
    */
-  overrides: {
-    /**
-     * The scope of the override
-     *
-     * If set to `undefined`, the override will apply to all extruders
-     *
-     * If set to a valid string `e<Number>` (`e0`, `e1`, `e2`, etc.),
-     * the override will apply to the corresponding extruder. Counting is
-     * zero based, so the first extruder is `e0`
-     */
-    scope: string,
-
-    /**
-     * The property to override
-     */
-    key: string,
-
-    /**
-     * The value to override with
-     */
-    value: string
-  }[],
+  overrides: override[],
 
   /**
    * Wether or not to transfer the ArrayBuffer to the worker
@@ -139,97 +117,49 @@ export class CuraWASM extends EventEmitter
   }
 
   /**
-   * Slice the provided STL using the settings specified in the constructor
-   * @param stl The raw STL to slice
+   * Slice the provided file using the settings specified in the constructor
+   * @param file The raw file to slice
+   * @param extension The file extension (Used for determining the correct parser)
    * @returns The raw, sliced GCODE
    */
-  slice(stl: ArrayBuffer): Promise<ArrayBuffer>
+  async slice(file: ArrayBuffer, extension: string): Promise<ArrayBuffer>
   {
-    return new Promise(async (resolve, reject) =>
+    //Make sure we've loaded emscripten
+    if (!this.loaded)
     {
-      //Make sure we've loaded emscripten
-      if (!this.loaded)
+      await this.load();
+    }
+
+    //If the transfer option is true, convert the model to a ThreadJS transferable otherwise have ThreadsJS clone the arraybuffer
+    const bytes = this.config.transfer ? Transfer(file) : file;
+
+    //Observe the progress
+    this.worker.observeProgress().subscribe(progress =>
+    {
+      //Normalize progress
+      progress = Math.trunc(100 * progress);
+
+      //Filter out repeat progress updates
+      if (this.oldProgress != progress)
       {
-        await this.load();
+        this.log(`Progress: ${progress}%`);
+
+        //Event event
+        this.emit('progress', progress);
       }
-
-      //If the transfer option is true, convert the model to a ThreadJS transferable otherwise have ThreadsJS clone the arraybuffer
-      const bytes = this.config.transfer ? Transfer(stl) : stl;
-
-      //Add model
-      this.worker.addFile('Model.stl', bytes);
-      this.log('Added model!');
-
-      //Generate event callback function name(s) (C++ will call these, so they need to be unique)
-      const progressHandlerName = uuid();
-
-      //Register callbacks
-      this.worker.observeCallback(progressHandlerName).subscribe((progress: number) =>
-      {
-        //Normalize progress
-        progress = Math.trunc(100 * progress);
-
-        //Filter out repeat progress updates
-        if (this.oldProgress != progress)
-        {
-          this.log(`Progress: ${progress}%`);
-
-          //Event event
-          this.emit('progress', progress);
-        }
-
-        //Update old progress
-        this.oldProgress = progress;
-      });
-
-      this.log('Registered callbacks!');
-
-      //Generate arguments
-      const cliArguments = [
-        'slice',
-        '-j',
-        `definitions/${this.config.definition}.def.json`,
-        '-l',
-        'Model.stl',
-        '-o',
-        'Model.gcode',
-        '--progress',
-        progressHandlerName
-      ];
-
-      //Append verbose flag
-      if (this.config.verbose)
-      {
-        cliArguments.push('-v');
-      }
-
-      //Append overrides
-      if (this.config.overrides != null) 
-      {
-        this.config.overrides.forEach(override =>
-        {
-          //Global scope applies the setting to all extruders
-          if (override.scope == null)
-          {
-            cliArguments.push('-s', `${override.key}=${override.value}`);
-          }
-          else
-          {
-            cliArguments.push('-s', override.scope, `${override.key}=${override.value}`);
-          }
-        });
-      }
-
-      //Slice
-      this.log(`Starting CuraEngine with arguments: ${cliArguments.join(', ')}`);
-      await this.worker.main(cliArguments);
-
-      //Read file and return GCODE
-      const gcode = await this.worker.getFile('Model.gcode');
-
-      //Return GCODE
-      resolve(gcode);
     });
+
+    //Run Cura
+    const gcode = <Error | ArrayBuffer>await this.worker.run(this.config.definition, this.config.overrides, this.config.verbose, bytes, extension.toLowerCase());
+
+    //Handle errors
+    if (gcode instanceof Error)
+    {
+      throw gcode;
+    }
+
+    //Return GCODE
+    return gcode;
   }
 
   /**
@@ -237,10 +167,6 @@ export class CuraWASM extends EventEmitter
    */
   async destroy(): Promise<void>
   {
-    //Remove model
-    await this.worker.removeFile('Model.stl');
-    this.log('Removed model!');
-
     //Remove definitions
     await this.worker.removeDefinitions();
     this.log('Removed definitions!');
