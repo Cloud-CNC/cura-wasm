@@ -25,6 +25,8 @@ window.handleGcode = async gcode =>
   link.remove();
 };
 
+window.transferSTL = true;
+
 //Upload
 document.getElementById('slice').addEventListener('click', async () =>
 {
@@ -34,7 +36,8 @@ document.getElementById('slice').addEventListener('click', async () =>
   //Create a slicer
   const slicer = new CuraWASM({
     definition: 'ultimaker2',
-    overrides: window.overrides
+    overrides: window.overrides,
+    transfer: window.transferSTL
   });
 
   //Add progress handler
@@ -48,6 +51,9 @@ document.getElementById('slice').addEventListener('click', async () =>
   const start = Date.now();
   const gcode = await slicer.slice(stl);
   const end = Date.now();
+
+  //Used by E2E tests
+  window.afterSTL = stl;
 
   //Calculate elapsed time
   const elapsed = new Date(end - start);

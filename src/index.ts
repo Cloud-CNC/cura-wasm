@@ -61,9 +61,18 @@ interface config
   }[],
 
   /**
+   * Wether or not to transfer the ArrayBuffer to the worker
+   * 
+   * (Prevents duplicating large amounts of memory but empties
+   * the ArrayBuffer on the main thread preventing other code from using
+   * the ArrayBuffer)
+   */
+  transfer: boolean
+
+  /**
    * Wether to enable verbose logging or not (Useful for debugging)
    */
-  verbose?: boolean
+  verbose: boolean
 }
 
 /**
@@ -101,6 +110,7 @@ export class CuraWASM extends EventEmitter
     this.config = {
       definition: defaultDefinition,
       overrides: [],
+      transfer: true,
       verbose: false,
       ...config
     };
@@ -143,8 +153,8 @@ export class CuraWASM extends EventEmitter
         await this.load();
       }
 
-      //Convert the model to a ThreadJS transferable (ArrayBuffer)
-      const bytes = Transfer(stl);
+      //If the transfer option is true, convert the model to a ThreadJS transferable otherwise have ThreadsJS clone the arraybuffer
+      const bytes = this.config.transfer ? Transfer(stl) : stl;
 
       //Add model
       this.worker.addFile('Model.stl', bytes);

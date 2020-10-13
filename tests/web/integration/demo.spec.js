@@ -57,7 +57,7 @@ describe('demo', () =>
     cy.get('#download').should('be.visible');
   });
 
-  it('will slice the file', done =>
+  it('will slice the file via transfering the ArrayBuffer', done =>
   {
     //Mocks
     cy.window().then(window =>
@@ -69,9 +69,36 @@ describe('demo', () =>
       cy.progressIncreases('#percent');
       cy.get('#download').click();
     });
+
+    cy.window().then(window =>
+    {
+      expect(window.afterSTL.byteLength).to.equal(0);
+    });
   });
 
-  it('will slice the file with overrides', done =>
+  it('will slice the file via cloning the ArrayBuffer', done =>
+  {
+    //Mocks
+    cy.window().then(window =>
+    {
+      //Clone the STL
+      window.transferSTL = false;
+
+      window.handleGcode = handleGcode('a0b0247aa8657e5d0d4d7daf9c63b149568f22e2a2fe35af7ff268120f3afa88', done);
+
+      //Slice
+      cy.get('#slice').click();
+      cy.progressIncreases('#percent');
+      cy.get('#download').click();
+    });
+
+    cy.window().then(window =>
+    {
+      expect(window.afterSTL.byteLength).to.be.greaterThan(0);
+    });
+  });
+
+  it('will slice the file via transfering the ArrayBuffer with overrides', done =>
   {
     //Mocks
     cy.window().then(window =>
@@ -84,10 +111,16 @@ describe('demo', () =>
           value: '20'
         }
       ];
+
       //Slice
       cy.get('#slice').click();
       cy.progressIncreases('#percent');
       cy.get('#download').click();
+    });
+
+    cy.window().then(window =>
+    {
+      expect(window.afterSTL.byteLength).to.equal(0);
     });
   });
 });

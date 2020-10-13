@@ -56,6 +56,13 @@ const main = async () =>
       }
     ],
 
+    /**
+     * Wether or not to transfer the input STL ArrayBuffer to the worker thread
+     * (Prevents duplicating large amounts of memory but empties the ArrayBuffer
+     * on the main thread preventing other code from using the ArrayBuffer)
+     */
+    transfer: true,
+
     /*
      * Wether to enable verbose logging (Useful for debugging; allows Cura
      * Engine to directly log to the console)
