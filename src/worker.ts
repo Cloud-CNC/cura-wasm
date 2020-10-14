@@ -93,7 +93,7 @@ const worker = {
      * A higher value indicates more time is usually taken
      * by the file converter and less time by the slicer
      */
-    const converterBias = 0.3;
+    const converterBias = extension == 'stl' ? 0 : 0.3;
 
     /**
      * The bias of the slicer progress

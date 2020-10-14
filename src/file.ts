@@ -76,7 +76,7 @@ export const convert = async (file: ArrayBuffer, extension: string, progress: (p
 
     parser.on('progress', (loaderProgress: number) =>
     {
-      progress(loaderProgress);
+      progress(loaderProgress / 100);
     });
 
     const meshes = await parser.load(file, format, {
