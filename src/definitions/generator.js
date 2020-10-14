@@ -7,11 +7,11 @@
 //Imports
 const {zip} = require('lodash');
 const {readdirSync, writeFileSync} = require('fs');
-const {resolve} = require('path');
+const {join} = require('path');
 const normalize = require('normalize-name');
 
 //Get list of filtered definitions (Used for file names)
-const filtered = readdirSync(resolve('.'))
+const filtered = readdirSync(__dirname)
   .filter(file => !['index.ts', 'generator.js'].includes(file))
   .map(file =>
   {
@@ -56,4 +56,4 @@ ${definitionExports}
 `;
 
 //Write the file
-writeFileSync('index.ts', template);
+writeFileSync(join(__dirname, 'index.ts'), template);

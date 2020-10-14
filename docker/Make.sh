@@ -14,7 +14,7 @@ git clone https://github.com/Ultimaker/CuraEngine.git
 cd CuraEngine
 
 #Apply the patch
-git checkout d53cdc4b18144cfdcff9eaff4e700022d6561beb
+git checkout 0bc96ef1535d161223971d13b2e373418561ea36
 git apply --ignore-space-change ../CuraEngine.patch
 
 #Build CuraEngine with emscripten
@@ -28,3 +28,6 @@ cd ../../
 #Generate patch
 #cd CuraEngine
 #git diff > ../CuraEngine.patch
+
+#Get current revision
+#git rev-parse HEAD

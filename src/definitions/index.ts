@@ -38,7 +38,13 @@ import anet3d_et5_x from './anet3d_et5_x.def.json';
 import anycubic_4max from './anycubic_4max.def.json';
 import anycubic_chiron from './anycubic_chiron.def.json';
 import anycubic_i3_mega from './anycubic_i3_mega.def.json';
+import anycubic_kossel from './anycubic_kossel.def.json';
+import anycubic_kossel_linear_plus from './anycubic_kossel_linear_plus.def.json';
+import anycubic_kossel_pulley from './anycubic_kossel_pulley.def.json';
 import anycubic_mega_zero from './anycubic_mega_zero.def.json';
+import artillery_base from './artillery_base.def.json';
+import artillery_genius from './artillery_genius.def.json';
+import artillery_sidewinder_x1 from './artillery_sidewinder_x1.def.json';
 import atmat_asterion from './atmat_asterion.def.json';
 import atmat_asterion_ht from './atmat_asterion_ht.def.json';
 import atmat_galaxy_500 from './atmat_galaxy_500.def.json';
@@ -53,9 +59,16 @@ import atmat_signal_pro_base from './atmat_signal_pro_base.def.json';
 import atmat_signal_xl from './atmat_signal_xl.def.json';
 import atmat_signal_xxl from './atmat_signal_xxl.def.json';
 import atmat_signal_xxxl from './atmat_signal_xxxl.def.json';
+import beamup_l from './beamup_l.def.json';
 import beamup_s from './beamup_s.def.json';
 import bfb from './bfb.def.json';
 import bibo2_dual from './bibo2_dual.def.json';
+import biqu_b1 from './biqu_b1.def.json';
+import biqu_b1_abl from './biqu_b1_abl.def.json';
+import biqu_base from './biqu_base.def.json';
+import blv_mgn_cube_300 from './blv_mgn_cube_300.def.json';
+import blv_mgn_cube_350 from './blv_mgn_cube_350.def.json';
+import blv_mgn_cube_base from './blv_mgn_cube_base.def.json';
 import bq_hephestos from './bq_hephestos.def.json';
 import bq_hephestos_2 from './bq_hephestos_2.def.json';
 import bq_hephestos_xl from './bq_hephestos_xl.def.json';
@@ -65,7 +78,9 @@ import builder_premium_large from './builder_premium_large.def.json';
 import builder_premium_medium from './builder_premium_medium.def.json';
 import builder_premium_small from './builder_premium_small.def.json';
 import cartesio from './cartesio.def.json';
+import cocoon_create from './cocoon_create.def.json';
 import cocoon_create_modelmaker from './cocoon_create_modelmaker.def.json';
+import cocoon_create_touch from './cocoon_create_touch.def.json';
 import creality_base from './creality_base.def.json';
 import creality_cr_x from './creality_cr-x.def.json';
 import creality_cr10 from './creality_cr10.def.json';
@@ -77,6 +92,7 @@ import creality_cr10s5 from './creality_cr10s5.def.json';
 import creality_cr10spro from './creality_cr10spro.def.json';
 import creality_cr20 from './creality_cr20.def.json';
 import creality_cr20pro from './creality_cr20pro.def.json';
+import creality_cr6se from './creality_cr6se.def.json';
 import creality_ender2 from './creality_ender2.def.json';
 import creality_ender3 from './creality_ender3.def.json';
 import creality_ender3pro from './creality_ender3pro.def.json';
@@ -89,6 +105,7 @@ import cubicon_3dp_210f from './cubicon_3dp_210f.def.json';
 import cubicon_3dp_310f from './cubicon_3dp_310f.def.json';
 import cubicon_common from './cubicon_common.def.json';
 import cubicon_dual_pro_a30 from './cubicon_dual_pro_a30.def.json';
+import cubicon_style_neo_a22 from './cubicon_style_neo_a22.def.json';
 import cubicon_style_plus_a15 from './cubicon_style_plus_a15.def.json';
 import custom from './custom.def.json';
 import dagoma_delta from './dagoma_delta.def.json';
@@ -111,6 +128,7 @@ import deltacomb_dc30 from './deltacomb_dc30.def.json';
 import deltacomb_dc30dual from './deltacomb_dc30dual.def.json';
 import deltacomb_dc30flux from './deltacomb_dc30flux.def.json';
 import delta_go from './delta_go.def.json';
+import diy220 from './diy220.def.json';
 import dxu from './dxu.def.json';
 import dxu_dual from './dxu_dual.def.json';
 import easyarts_ares from './easyarts_ares.def.json';
@@ -125,7 +143,14 @@ import flsun_qq from './flsun_qq.def.json';
 import flsun_qq_s from './flsun_qq_s.def.json';
 import flyingbear_base from './flyingbear_base.def.json';
 import flyingbear_ghost_4s from './flyingbear_ghost_4s.def.json';
+import flyingbear_ghost_5 from './flyingbear_ghost_5.def.json';
 import folgertech_FT_5 from './folgertech_FT-5.def.json';
+import fusedform_300 from './fusedform_300.def.json';
+import fusedform_600 from './fusedform_600.def.json';
+import fusedform_600plus from './fusedform_600plus.def.json';
+import fusedform_base from './fusedform_base.def.json';
+import fusedform_mini from './fusedform_mini.def.json';
+import fusedform_std from './fusedform_std.def.json';
 import geeetech_A10 from './geeetech_A10.def.json';
 import geeetech_A10M from './geeetech_A10M.def.json';
 import geeetech_A10T from './geeetech_A10T.def.json';
@@ -225,11 +250,16 @@ import stereotech_start from './stereotech_start.def.json';
 import stereotech_ste320 from './stereotech_ste320.def.json';
 import strateo3d from './strateo3d.def.json';
 import structur3d_discov3ry1_complete_um2plus from './structur3d_discov3ry1_complete_um2plus.def.json';
+import SV01 from './SV01.def.json';
+import SV02 from './SV02.def.json';
 import tam from './tam.def.json';
 import tevo_blackwidow from './tevo_blackwidow.def.json';
 import tevo_tarantula from './tevo_tarantula.def.json';
 import tevo_tarantula_pro from './tevo_tarantula_pro.def.json';
 import tevo_tornado from './tevo_tornado.def.json';
+import tinyboy_e10 from './tinyboy_e10.def.json';
+import tinyboy_e16 from './tinyboy_e16.def.json';
+import tinyboy_ra20 from './tinyboy_ra20.def.json';
 import tizyx_evy from './tizyx_evy.def.json';
 import tizyx_evy_dual from './tizyx_evy_dual.def.json';
 import tizyx_k25 from './tizyx_k25.def.json';
@@ -320,7 +350,13 @@ export default {
   anycubic_4max,
   anycubic_chiron,
   anycubic_i3_mega,
+  anycubic_kossel,
+  anycubic_kossel_linear_plus,
+  anycubic_kossel_pulley,
   anycubic_mega_zero,
+  artillery_base,
+  artillery_genius,
+  artillery_sidewinder_x1,
   atmat_asterion,
   atmat_asterion_ht,
   atmat_galaxy_500,
@@ -335,9 +371,16 @@ export default {
   atmat_signal_xl,
   atmat_signal_xxl,
   atmat_signal_xxxl,
+  beamup_l,
   beamup_s,
   bfb,
   bibo2_dual,
+  biqu_b1,
+  biqu_b1_abl,
+  biqu_base,
+  blv_mgn_cube_300,
+  blv_mgn_cube_350,
+  blv_mgn_cube_base,
   bq_hephestos,
   bq_hephestos_2,
   bq_hephestos_xl,
@@ -347,7 +390,9 @@ export default {
   builder_premium_medium,
   builder_premium_small,
   cartesio,
+  cocoon_create,
   cocoon_create_modelmaker,
+  cocoon_create_touch,
   creality_base,
   creality_cr_x,
   creality_cr10,
@@ -359,6 +404,7 @@ export default {
   creality_cr10spro,
   creality_cr20,
   creality_cr20pro,
+  creality_cr6se,
   creality_ender2,
   creality_ender3,
   creality_ender3pro,
@@ -371,6 +417,7 @@ export default {
   cubicon_3dp_310f,
   cubicon_common,
   cubicon_dual_pro_a30,
+  cubicon_style_neo_a22,
   cubicon_style_plus_a15,
   custom,
   dagoma_delta,
@@ -393,6 +440,7 @@ export default {
   deltacomb_dc30dual,
   deltacomb_dc30flux,
   delta_go,
+  diy220,
   dxu,
   dxu_dual,
   easyarts_ares,
@@ -407,7 +455,14 @@ export default {
   flsun_qq_s,
   flyingbear_base,
   flyingbear_ghost_4s,
+  flyingbear_ghost_5,
   folgertech_FT_5,
+  fusedform_300,
+  fusedform_600,
+  fusedform_600plus,
+  fusedform_base,
+  fusedform_mini,
+  fusedform_std,
   geeetech_A10,
   geeetech_A10M,
   geeetech_A10T,
@@ -507,11 +562,16 @@ export default {
   stereotech_ste320,
   strateo3d,
   structur3d_discov3ry1_complete_um2plus,
+  SV01,
+  SV02,
   tam,
   tevo_blackwidow,
   tevo_tarantula,
   tevo_tarantula_pro,
   tevo_tornado,
+  tinyboy_e10,
+  tinyboy_e16,
+  tinyboy_ra20,
   tizyx_evy,
   tizyx_evy_dual,
   tizyx_k25,

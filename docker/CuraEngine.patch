@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 3490f3b07..a57c1a74d 100644
+index 0b1bdeacf..0448a5d35 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -97,7 +97,7 @@ if (ENABLE_MORE_COMPILER_OPTIMIZATION_FLAGS AND NOT (CMAKE_BUILD_TYPE_UPPER MATC
@@ -12,11 +12,11 @@ index 3490f3b07..a57c1a74d 100644
  endif ()
  
 diff --git a/src/communication/CommandLine.cpp b/src/communication/CommandLine.cpp
-index ca0791814..1f1506887 100644
+index e05aebf3e..631e032b7 100644
 --- a/src/communication/CommandLine.cpp
 +++ b/src/communication/CommandLine.cpp
 @@ -22,6 +22,8 @@
- #include "../utils/floatpoint.h"
+ #include "../utils/FMatrix4x3.h" //For the mesh_rotation_matrix setting.
  #include "../utils/logoutput.h"
  
 +#include <emscripten.h>

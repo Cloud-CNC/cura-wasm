@@ -8,6 +8,7 @@
 [Cura Engine](https://github.com/ultimaker/curaengine) powered by [Web Assembly (WASM)](https://webassembly.org)
 
 ## Features
+* Supports multiple input file formats including 3MF, AMF, PLY, OBJ, and STL via the [Unified 3D Loader](https://github.com/cloud-cnc/unified-3d-loader)
 * Written in modern TypeScript
 * Uses Rollup for JS/TS compilation
 * Uses Docker for C++ compilation (Enhanced reproducibility)
@@ -81,7 +82,7 @@ const main = async () =>
   });
 
   //Slice (This can take multiple minutes to resolve!)
-  const gcode = await slicer.slice(stl);
+  const gcode = await slicer.slice(stl, 'stl');
 
   //Do something with the GCODE (ArrayBuffer)
 
@@ -111,14 +112,14 @@ Name | Slice Time
 *Note: NodeJS, Chrome, and Firefox were ran 3 times then averaged; Native Cura Engine was ran 6 times then averaged due to more inconsistent times. The benchmarking computer ran Windows 10 Pro 2004 (19041.329) and had a Ryzen 7 3700X, 32GB DDR4-3600MHZ (CL16), NVMe Gen 4 SSD, and an RTX 2070 Super (Maybe the GPU matters* ¯\\_(ツ)_/¯ *).*
 
 ### Low level API
-If you want more finite control over Cura WASM, consider interacting with the worker ([`worker.ts`](src/worker.ts)) and bypassing the normal `CuraWASM` ([`index.ts`](src/index.ts)) class. This allows finite control over the command line arguments passed to Cura Engine, direct file I/O, and more; you'll need to re-implement some of the worker management found in the CuraWASM class though. If that's not low enough, consider directly importing [`CuraEngine.js`](src/CuraEngine.js) (Which is directly built by Emscripten); be warned: it will choke up the calling thread hence the need for Threads JS.
+You can directly import [`CuraEngine.js`](./src/CuraEngine.js) from the `src` directory. It's directly built by Emscripten but be warned: it will choke up the calling thread hence the need for Threads JS.
 
 ## FAQ
 
 ### How does it work?
 Cura WASM uses [emscripten](https://emscripten.org) to compile [Cura Engine](https://github.com/ultimaker/curaengine) to [Web Assembly](https://webassembly.org).
 
-Emscripten provides a virtual filesystem with which Cura WASM loads your STL into as well as the 3D printer definitions. Cura WASM includes a very small modification to Cura Engine which makes it call 2 global functions (Unique to each instance of Cura WASM) alerting Cura WASM when the progress updates and when the part is done so Cura WASM can read the GCODE out of the virtual filesystem.
+Depending on the input file format, Cura WASM uses the [Unified 3D Loader](https://github.com/cloud-cnc/unified-3d-loader) to convert any non-STL file to an STL file. Emscripten provides a virtual filesystem with which Cura WASM loads the STL file into as well as the 3D printer definitions. Cura WASM includes a very small modification to Cura Engine which makes it call the global worker progress function alerting Cura WASM when the progress updates so it can pass it along to the API consumer.
 
 ### Hasn't this been done before?
 Yes, this is by no means the first time someone has compiled Cura Engine to run in the browser. Previous projects include [gyf304/cura-emscripten](https://github.com/gyf304/cura-emscripten), [nelsonsilva/CuraEngine-em](https://github.com/nelsonsilva/CuraEngine-em), [Skeen/CuraJS-Engine](https://github.com/Skeen/CuraJS-Engine), and possibly more. However, none of these are maintained and only one (CuraJS) is meant to be used as a library - not a stand-alone application.

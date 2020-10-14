@@ -24,7 +24,7 @@ module.exports = () =>
 
     expect(file.byteLength).to.be.equal(0);
 
-    expect(hash(gcode)).to.equal('86daabc058054ea6fa06274b356e5083fe8eeaa583c54c07113f508af7b7adbf');
+    expect(hash(gcode)).to.equal('7db7cf2d46dfc782b0dd18beb77d03f392cd2e6c31a707493bc657ed32648473');
 
     await slicer.destroy();
   });
