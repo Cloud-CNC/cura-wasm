@@ -8,6 +8,8 @@
  * 
  * See https://github.com/Ultimaker/Cura/tree/master/resources/definitions
  * for more information
+ * 
+ * **THIS FILE IS MIT LICENSED!**
  */
 
 //Imports

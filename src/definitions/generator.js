@@ -2,6 +2,8 @@
  * @fileoverview Definitions generator
  * This file is meant executed when new definitions are added.
  * It should not be bundled and shipped in production code.
+ * 
+ * **THIS FILE IS MIT LICENSED!**
  */
 
 //Imports

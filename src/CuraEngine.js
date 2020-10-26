@@ -1,3 +1,6 @@
+/**
+ * **THIS FILE IS AGLP3+ LICENSED!**
+ */
 
 var CuraEngine = (function() {
   var _scriptDir = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : undefined;
