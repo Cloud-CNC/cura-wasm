@@ -14,6 +14,7 @@
   ],
   "browserslist": "> 0.25%, not dead",
   "scripts": {
+    "benchmark": "node assets/benchmark.js",
     "build": "rollup -c",
     "chart": "node assets/chart.js",
     "coverage": "npm run test:node && npm run test:browser:cli && nyc report --reporter=lcov",

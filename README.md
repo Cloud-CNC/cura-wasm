@@ -96,20 +96,20 @@ main();
 * Multiple NodeJS examples can be found in the [`tests/node` directory](tests/node).
 
 ### Performance
-The performance is decent but not great. If you're running NodeJS, consider using Native Cura Engine instead unless you want the isolation from the WASM VM.
+The performance is decent but not great. If you're running NodeJS, consider using native Cura Engine instead unless you want the isolation from the WASM VM.
 
 *Note: Cura Engine uses OpenMP for multithreading, however, Emscripten doesn't support OpenMP.*
 
 Name | Slice Time
 --- | ---
-`NodeJS V14.4.0` | `6084ms`
-`Chrome 83.0.4103.116` | `5476ms`
-`Firefox 77.0.1` | `5035ms`
-`Native Cura Engine V4.6.1` | `1945ms`
+`NodeJS V15.2.0` | `7782ms`
+`Chrome 86.0.4240.193` | `6615ms`
+`Firefox 82.0.3` | `6581ms`
+`Native Cura Engine V4.6.1` | `2259ms`
 
 [![Slicing Time](assets/chart.png)](assets/chart.png)
 
-*Note: NodeJS, Chrome, and Firefox were ran 3 times then averaged; Native Cura Engine was ran 6 times then averaged due to more inconsistent times. The benchmarking computer ran Windows 10 Pro 2004 (19041.329) and had a Ryzen 7 3700X, 32GB DDR4-3600MHZ (CL16), NVMe Gen 4 SSD, and an RTX 2070 Super (Maybe the GPU matters* ¯\\_(ツ)_/¯ *).*
+*Note: All runtimes were benchmarked 6 times then averaged. The benchmarking computer ran Windows 10 Pro 20H2 (19042.610), with a Ryzen 7 3700X, 32GB DDR4-3600MHZ (CL16), NVMe Gen 4 SSD.*
 
 ### Low level API
 You can directly import [`CuraEngine.js`](./src/CuraEngine.js) from the `src` directory. It's directly built by Emscripten but be warned: it will choke up the calling thread hence the need for Threads JS.

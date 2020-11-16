@@ -4,6 +4,9 @@ container
 # Build
 dist
 
+# GCODE (Debugging)
+*.gcode
+
 # Cypress
 tests/web/screenshots
 tests/web/videos

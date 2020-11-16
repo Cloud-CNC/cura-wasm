@@ -15,7 +15,10 @@ const hash = (raw, algorithm = 'sha256') =>
   return crypto.createHash(algorithm).update(new Uint8Array(raw)).digest('hex');
 };
 
+const saveFiles = !!process.env.save_files;
+
 //Export
 module.exports = {
-  hash
+  hash,
+  saveFiles
 };

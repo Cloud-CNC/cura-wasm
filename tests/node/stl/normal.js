@@ -4,7 +4,7 @@
 
 //Imports
 const {expect} = require('chai');
-const {hash} = require('../utils');
+const {hash, saveFiles} = require('../utils');
 const CuraWASM = require('../../../dist/cjs/main');
 const fs = require('fs');
 
@@ -22,9 +22,15 @@ module.exports = () =>
 
     const gcode = await slicer.slice(file, 'stl');
 
+    //Optionally save
+    if (saveFiles)
+    {
+      fs.writeFileSync('./stl-normal.gcode', new Uint8Array(gcode));
+    }
+
     expect(file.byteLength).to.be.equal(0);
 
-    expect(hash(gcode)).to.equal('b601f088a80203b20f1e84b7afcd27d9c2122f46539f48a120fa0bf36ffc36a1');
+    expect(hash(gcode)).to.equal('e7f1d0a866ffc6ce9294d5c1a659430577a797ed891497a2637f0389a557c7ec');
 
     await slicer.destroy();
   });

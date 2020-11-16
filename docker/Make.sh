@@ -14,13 +14,13 @@ git clone https://github.com/Ultimaker/CuraEngine.git
 cd CuraEngine
 
 #Apply the patch
-git checkout 0bc96ef1535d161223971d13b2e373418561ea36
+git checkout 0852f3cd5e909c9ebb459befb499292460da97d4
 git apply --ignore-space-change ../CuraEngine.patch
 
 #Build CuraEngine with emscripten
 mkdir build
 cd build
-export EMMAKEN_CFLAGS="-O3 -s ALLOW_MEMORY_GROWTH=1 -s EXPORT_ES6=1 -s EXPORT_NAME='CuraEngine' -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"callMain\", \"FS\"]' -s INVOKE_RUN=0 -s MODULARIZE=1 -s SINGLE_FILE=1 -s USE_ES6_IMPORT_META=0"
+export EMMAKEN_CFLAGS="-O2 -s ALLOW_MEMORY_GROWTH=1 -s EXPORT_ES6=1 -s EXPORT_NAME='CuraEngine' -s EXTRA_EXPORTED_RUNTIME_METHODS='[\"callMain\", \"FS\"]' -s INVOKE_RUN=0 -s MODULARIZE=1 -s SINGLE_FILE=1 -s USE_ES6_IMPORT_META=0"
 emcmake cmake -DENABLE_ARCUS=OFF -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF ..
 emmake make
 cd ../../

@@ -73,7 +73,7 @@ describe('cura wasm', () =>
       //Mocks
       cy.window().then(window =>
       {
-        window.handleGcode = handleGcode('b601f088a80203b20f1e84b7afcd27d9c2122f46539f48a120fa0bf36ffc36a1', done);
+        window.handleGcode = handleGcode('e7f1d0a866ffc6ce9294d5c1a659430577a797ed891497a2637f0389a557c7ec', done);
 
         //Slice
         cy.get('#slice').click();
@@ -95,7 +95,7 @@ describe('cura wasm', () =>
         //Clone the file
         window.transferFile = false;
 
-        window.handleGcode = handleGcode('b601f088a80203b20f1e84b7afcd27d9c2122f46539f48a120fa0bf36ffc36a1', done);
+        window.handleGcode = handleGcode('e7f1d0a866ffc6ce9294d5c1a659430577a797ed891497a2637f0389a557c7ec', done);
 
         //Slice
         cy.get('#slice').click();
@@ -114,7 +114,7 @@ describe('cura wasm', () =>
       //Mocks
       cy.window().then(window =>
       {
-        window.handleGcode = handleGcode('d8d34537a814083854b556c5a3850b78c632602d170a0d0434a980d111765c7b', done);
+        window.handleGcode = handleGcode('8a3c52fd73736baea9e3c8f29e4c05938c42ad9c72ffea9a9dbe71530268098b', done);
 
         window.overrides = [
           {
@@ -163,7 +163,7 @@ describe('cura wasm', () =>
       //Mocks
       cy.window().then(window =>
       {
-        window.handleGcode = handleGcode('7db7cf2d46dfc782b0dd18beb77d03f392cd2e6c31a707493bc657ed32648473', done);
+        window.handleGcode = handleGcode('e777ca6d8fb935ea823a5bf5324a979e0ad932339265ee08e45be6b17c6ad531', done);
 
         //Slice
         cy.get('#slice').click();

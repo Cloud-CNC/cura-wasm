@@ -4,7 +4,7 @@
 
 //Imports
 const {expect} = require('chai');
-const {hash} = require('../utils');
+const {hash, saveFiles} = require('../utils');
 const CuraWASM = require('../../../dist/cjs/main');
 const fs = require('fs');
 
@@ -28,9 +28,15 @@ module.exports = () =>
 
     const gcode = await slicer.slice(file, 'stl');
 
+    //Optionally save
+    if (saveFiles)
+    {
+      fs.writeFileSync('./stl-overrides.gcode', new Uint8Array(gcode));
+    }
+
     expect(file.byteLength).to.be.equal(0);
 
-    expect(hash(gcode)).to.equal('d8d34537a814083854b556c5a3850b78c632602d170a0d0434a980d111765c7b');
+    expect(hash(gcode)).to.equal('8a3c52fd73736baea9e3c8f29e4c05938c42ad9c72ffea9a9dbe71530268098b');
 
     await slicer.destroy();
   });

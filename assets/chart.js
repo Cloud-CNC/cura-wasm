@@ -3,8 +3,53 @@
  */
 
 //Imports
+const {mean} = require('lodash');
 const path = require('path');
 const quickchart = require('quickchart-js');
+
+//Raw data
+const data = {
+  nodejs: [
+    7814,
+    7712,
+    7725,
+    7767,
+    7823,
+    7852
+  ],
+  chrome: [
+    6528,
+    6648,
+    6576,
+    6627,
+    6655,
+    6658
+  ],
+  firefox: [
+    6630,
+    6533,
+    6580,
+    6632,
+    6538,
+    6578
+  ],
+  native: [
+    2333,
+    1830,
+    2335,
+    2318,
+    2315,
+    2423
+  ]
+};
+
+//Calculate averages
+const nodejsAverage = mean(data.nodejs);
+const chromeAverage = mean(data.chrome);
+const firefoxAverage = mean(data.firefox);
+const nativeAverage = mean(data.native);
+
+console.log(`[Averages] NodeJS: ${nodejsAverage} Chrome: ${chromeAverage} Firefox: ${firefoxAverage} Native: ${nativeAverage}`);
 
 //Instantiate a new quickchart
 const chart = new quickchart();
@@ -23,10 +68,10 @@ chart.setConfig({
       {
         label: 'Slice Time (MS)',
         data: [
-          6084,
-          5476,
-          5035,
-          1945
+          nodejsAverage,
+          chromeAverage,
+          firefoxAverage,
+          nativeAverage
         ]
       }
     ]
@@ -62,7 +107,7 @@ chart.setConfig({
           type: 'line',
           mode: 'horizontal',
           scaleID: 'y-axis-0',
-          value: 1945,
+          value: nativeAverage,
           borderColor: '#000000',
           borderWidth: 1.5,
           label: {
@@ -82,4 +127,4 @@ chart.setWidth(1000);
 chart.setHeight(600);
 
 //Get the URL
-chart.toFile(path.resolve('assets/chart.png'));
+chart.toFile(path.join(__dirname, 'chart.png'));
