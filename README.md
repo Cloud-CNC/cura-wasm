@@ -21,21 +21,25 @@
 ### Exports
 Cura WASM ships with both ES6 and CJS exports. The ES6 version is built with browsers in mind and likely won't work on NodeJS; the CJS version is built with NodeJS in mind and almost certainly won't work on browsers due to lacking standard modules.
 
+### Definitions
+Unless you have your own 3D printer definition (That aren't included with Cura), you should use [`cura-wasm-definitions`](https://github.com/cloud-cnc/cura-wasm-definitions) for 3D printer defintions.
+
 ### Examples
 * Basic Benchy + Ultimaker 2 example
 ```Javascript
 import CuraWASM from 'cura-wasm';
+import ResolveDefinition from 'cura-wasm-definitions';
 
 const main = async () =>
 {
   //Create a new slicer
   const slicer = new CuraWASM({
     /*
-     * The 3D printer definition to slice for (See the src/definitions directory
-     * or https://github.com/Ultimaker/Cura/tree/master/resources/definitions
+     * The 3D printer definition to slice for (See the cura-wasm-definitions
+     * repository or https://github.com/cloud-cnc/cura-wasm-definitions
      * for a list of built-in definitions)
      */
-    definition: 'ultimaker2',
+    definition: ResolveDefinition('ultimaker2'),
 
     /*
      * Overrides for the current 3D printer definition (Passed to Cura Engine
@@ -128,6 +132,6 @@ Yes, this is by no means the first time someone has compiled Cura Engine to run 
 Yes. If you're looking for something specific to help with, I'd greatly appreciate any help with making Cura Engine run faster, tightening the JS/TS <---> C++ coupling (eg: improved Cura Engine error reporting), and improving the JS/TS API (eg: allow users to only bundle the printer definitions they need).
 
 ### What's the license?
-Cura WASM relies on Cura Engine [which uses AGPL3+](https://github.com/Ultimaker/CuraEngine/blob/master/LICENSE) and Cura which [which uses LGPL3+](https://github.com/Ultimaker/Cura/blob/master/LICENSE) hence the AGLP3+/LGPL3+ license requirement. With that said, the AGLP3+ license **only** applies to [CuraEngine.js](./src/CuraEngine.js), the LGPL3+ license **only** applies to all files in the [src](./src/) directory excluding [generator.js](./src/definitions/generator.js) and [index.ts](./src/definitions/index.ts). All other files use the MIT licensed.
+Cura WASM relies on Cura Engine [which uses AGPL3+](https://github.com/Ultimaker/CuraEngine/blob/master/LICENSE) and Cura which [which uses LGPL3+](https://github.com/Ultimaker/Cura/blob/master/LICENSE) hence the AGLP3+/LGPL3+ license requirement. With that said, the AGLP3+ license **only** applies to [CuraEngine.js](./src/CuraEngine.js), the LGPL3+ license **only** applies to all files in the [src](./src/) directory excluding [index.ts](./src/definitions/index.ts). All other files use the MIT licensed.
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm?ref=badge_large)

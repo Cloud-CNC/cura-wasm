@@ -3,7 +3,7 @@
  */
 
 //Imports
-import {definitionsType, override as overrideType} from './types';
+import {override as overrideType} from './types';
 
 /**
  * Generate Cura CLI arguments
@@ -12,13 +12,13 @@ import {definitionsType, override as overrideType} from './types';
  * @param overrides Cura overrides
  * @param verbose Wether or not to enable verbose logging in Cura
  */
-export const generate = (progressHandlerName: string, definition: definitionsType, overrides: overrideType[] | null, verbose: boolean | null): string[] =>
+export const generate = (progressHandlerName: string, overrides: overrideType[] | null, verbose: boolean | null): string[] =>
 {
   //Initial arguments
   const args = [
     'slice',
     '-j',
-    `definitions/${definition}.def.json`,
+    'definitions/definition.def.json',
     '-l',
     'Model.stl',
     '-o',

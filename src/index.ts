@@ -4,9 +4,11 @@
 
 //Imports
 import {BlobWorker, spawn, Thread, Transfer} from 'threads';
+import {Definition} from 'cura-wasm-definitions/src/types';
 import {EventEmitter} from 'events';
-import type {definitionsType, override} from './types';
+import definitions from 'cura-wasm-definitions/src/definitions/index';
 import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
+import type {override} from './types';
 
 //@ts-ignore Import worker (Bundled with `rollup-plugin-bundle-imports`)
 import WorkerText from './worker';
@@ -14,7 +16,7 @@ import WorkerText from './worker';
 /**
  * Default printer definition
  */
-const defaultDefinition: definitionsType = 'fdmprinter';
+const defaultDefinition: Definition = definitions.fdmprinter;
 
 /**
  * Duplicate definition of non-exported ArbitraryThreadType from threads/dist/master/spawn.d.ts
@@ -31,7 +33,7 @@ interface config
    * 
    * Default: `fdmprinter`
    */
-  definition: definitionsType,
+  definition: Definition,
 
   /**
    * Overrides for the specified 3D printer definition
@@ -109,7 +111,7 @@ export class CuraWASM extends EventEmitter
     await this.worker.initialize(this.config.verbose);
     this.log('Initialized worker!');
 
-    await this.worker.addDefinitions();
+    await this.worker.addDefinitions(this.config.definition);
     this.log('Added definitions!');
 
     //Set loaded flag
@@ -150,7 +152,7 @@ export class CuraWASM extends EventEmitter
     });
 
     //Run Cura
-    const gcode = <Error | ArrayBuffer>await this.worker.run(this.config.definition, this.config.overrides, this.config.verbose, bytes, extension.toLowerCase());
+    const gcode = <Error | ArrayBuffer>await this.worker.run(this.config.overrides, this.config.verbose, bytes, extension.toLowerCase());
 
     //Handle errors
     if (gcode instanceof Error)

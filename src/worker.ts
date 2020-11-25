@@ -4,13 +4,14 @@
 
 //Imports
 import {convert} from './file';
-import {definitionsType, override} from './types';
 import {expose, Transfer, TransferDescriptor} from 'threads';
 import {generate} from './arguments';
 import {Observable} from 'observable-fns';
 import {Observer} from 'observable-fns/dist/observable';
+import {override} from './types';
 import CuraEngine from './CuraEngine.js';
 import definitions from './definitions/index';
+import type {Definition} from 'cura-wasm-definitions/src/types';
 
 /**
  * `EmscriptenModule` with a few tweaks
@@ -54,21 +55,26 @@ const worker = {
 
   /**
    * Add 3D printer definition files to the virtual filesystem
+   * @param definition The printer definition
    */
-  async addDefinitions(): Promise<void>
+  async addDefinitions(definition: Definition): Promise<void>
   {
     engine.FS.mkdir('/definitions');
 
+    //Add primary definitions
     for (const rawDefinition in definitions)
     {
       //Cast raw definition type
       const definition = <keyof typeof definitions>rawDefinition;
 
-      const path = `definitions/${definition}.def.json`;
+      const path = `/definitions/${definition}.def.json`;
 
       //Copy file to memory filesystem
       engine.FS.writeFile(path, JSON.stringify(definitions[definition]));
     }
+
+    //Add secondary definition
+    engine.FS.writeFile('/definitions/definition.def.json', JSON.stringify(definition));
   },
 
   observeProgress: () => new Observable(observer =>
@@ -78,14 +84,13 @@ const worker = {
 
   /**
    * Run Cura
-   * @param definition The printer definition
    * @param overrides Cura overrides
    * @param verbose Wether or not to enable verbose logging in Cura
    * @param file The file
    * @param extension The file extension
    * @param progress The progress event handler
    */
-  async run(definition: definitionsType, overrides: override[] | null, verbose: boolean | null, file: ArrayBuffer, extension: string): Promise<TransferDescriptor | Error>
+  async run(overrides: override[] | null, verbose: boolean | null, file: ArrayBuffer, extension: string): Promise<TransferDescriptor | Error>
   {
     /**
      * The bias of the file converter progress (Range: 0-1)
@@ -146,7 +151,7 @@ const worker = {
       };
 
       //Generate CLI arguments
-      const args = generate(progressHandlerName, definition, overrides, verbose);
+      const args = generate(progressHandlerName, overrides, verbose);
 
       //Run Cura (Blocking)
       engine.callMain(args);
@@ -171,16 +176,20 @@ const worker = {
    */
   async removeDefinitions(): Promise<void>
   {
+    //Remove primary definitions
     for (const rawDefinition in definitions)
     {
       //Cast raw definition type
       const definition = <keyof typeof definitions>rawDefinition;
 
-      const path = `definitions/${definition}.def.json`;
+      const path = `/definitions/${definition}.def.json`;
 
       //Copy file to memory filesystem
       engine.FS.unlink(path);
     }
+
+    //Remove secondary definition
+    engine.FS.unlink('/definitions/definition.def.json');
 
     engine.FS.rmdir('/definitions');
   }

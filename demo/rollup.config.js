@@ -43,13 +43,5 @@ module.exports = {
       ]
     }),
     terser()
-  ],
-  onwarn: (warning, warn) =>
-  {
-    //Hide eval warning from Emscripten
-    if (warning.code != 'EVAL' && warning.code != 'THIS_IS_UNDEFINED')
-    {
-      warn(warning);
-    }
-  }
+  ]
 };

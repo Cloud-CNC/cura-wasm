@@ -18,8 +18,8 @@
     "build": "rollup -c",
     "chart": "node assets/chart.js",
     "coverage": "npm run test:node && npm run test:browser:cli && nyc report --reporter=lcov",
-    "definitions": "node src/definitions/generator.js",
     "demo": "nollup -c demo/rollup.config.js --content-base demo",
+    "lint": "eslint .",
     "test:browser:cli": "concurrently --kill-others --success first \"npm:demo\" \"wait-on http-get://127.0.0.1:8080 && cypress run\"",
     "test:browser:gui": "concurrently --kill-others --success first \"npm:demo\" \"wait-on http-get://127.0.0.1:8080 && cypress open\"",
     "test:node": "npm run build && nyc --reporter=lcov mocha --colors --exit --timeout 60000 tests/node/index.js"
@@ -47,7 +47,6 @@
     "unified-3d-loader": "^1.1.3"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.8.1",
     "@rollup/plugin-commonjs": "^13.0.2",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^8.4.0",
@@ -58,9 +57,9 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^3.10.1",
     "@typescript-eslint/parser": "^3.10.1",
-    "babel-plugin-istanbul": "^6.0.0",
     "chai": "^4.2.0",
     "concurrently": "^5.3.0",
+    "cura-wasm-definitions": "^1.3.4-alpha.2",
     "cypress": "^4.12.1",
     "eslint": "^7.11.0",
     "events": "^3.2.0",

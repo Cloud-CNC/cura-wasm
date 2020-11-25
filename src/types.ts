@@ -2,14 +2,9 @@
  * @fileoverview Cura WASM types
  */
 
-//Imports
-import definitions from './definitions/index';
-
 /**
- * Type representing all available printer definitions
+ * Override type
  */
-export type definitionsType = keyof typeof definitions;
-
 export interface override
 {
   /**

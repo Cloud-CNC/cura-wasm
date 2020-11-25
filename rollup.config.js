@@ -11,6 +11,9 @@ import resolve from '@rollup/plugin-node-resolve';
 import threads from 'rollup-plugin-threads';
 import typescript from 'rollup-plugin-typescript2';
 
+/**
+ * Rollup event handler
+ */
 const onwarn = (warning, warn) =>
 {
   //Hide eval warning from Emscripten and this -> undefined warning
@@ -60,7 +63,8 @@ const cjs = {
         json(),
         commonjs(),
         typescript()
-      ]
+      ],
+      onwarn
     }),
     terser(),
     copy({
