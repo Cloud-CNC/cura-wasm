@@ -16,6 +16,11 @@
 * Works in the browser and on NodeJS
 * Thoroughly commented
 
+## Install
+```console
+npm i cura-wasm
+```
+
 ## Usage
 
 ### Exports
@@ -28,7 +33,7 @@ Unless you have your own 3D printer definition (That aren't included with Cura),
 * Basic Benchy + Ultimaker 2 example
 ```Javascript
 import CuraWASM from 'cura-wasm';
-import ResolveDefinition from 'cura-wasm-definitions';
+import {resolveDefinition} from 'cura-wasm-definitions';
 
 const main = async () =>
 {
@@ -39,7 +44,7 @@ const main = async () =>
      * repository or https://github.com/cloud-cnc/cura-wasm-definitions
      * for a list of built-in definitions)
      */
-    definition: ResolveDefinition('ultimaker2'),
+    definition: resolveDefinition('ultimaker2'),
 
     /*
      * Overrides for the current 3D printer definition (Passed to Cura Engine
@@ -129,9 +134,17 @@ Depending on the input file format, Cura WASM uses the [Unified 3D Loader](https
 Yes, this is by no means the first time someone has compiled Cura Engine to run in the browser. Previous projects include [gyf304/cura-emscripten](https://github.com/gyf304/cura-emscripten), [nelsonsilva/CuraEngine-em](https://github.com/nelsonsilva/CuraEngine-em), [Skeen/CuraJS-Engine](https://github.com/Skeen/CuraJS-Engine), and possibly more. However, none of these are maintained and only one (CuraJS) is meant to be used as a library - not a stand-alone application.
 
 ### Can I contribute?
-Yes. If you're looking for something specific to help with, I'd greatly appreciate any help with making Cura Engine run faster, tightening the JS/TS <---> C++ coupling (eg: improved Cura Engine error reporting), and improving the JS/TS API (eg: allow users to only bundle the printer definitions they need).
+Yes. If you're looking for something specific to help with, I'd greatly appreciate any help with making Cura Engine run faster, tightening the JS/TS <---> C++ coupling (eg: improved Cura Engine error reporting), and improving the JS/TS API.
 
 ### What's the license?
 Cura WASM relies on Cura Engine [which uses AGPL3+](https://github.com/Ultimaker/CuraEngine/blob/master/LICENSE) and Cura which [which uses LGPL3+](https://github.com/Ultimaker/Cura/blob/master/LICENSE) hence the AGLP3+/LGPL3+ license requirement. With that said, the AGLP3+ license **only** applies to [CuraEngine.js](./src/CuraEngine.js), the LGPL3+ license **only** applies to all files in the [src](./src/definitions) directory excluding [index.ts](./src/definitions/index.ts). All other files use the MIT licensed.
+
+## License Obligations
+
+### Upstream Modifications
+Minor modifications to Cura Engine to get it to compile and for progress logging (See [`docker/CuraEngine.patch`](./docker/CuraEngine.patch) for exact modifications). All definitions are used verbatim.
+
+### Source
+The sources are located at [github.com/ultimaker/curaengine](https://github.com/ultimaker/curaengine), [github.com/ultimaker/cura](https://github.com/ultimaker/cura), [github.com/cloud-cnc/cura-wasm-definitions](https://github.com/cloud-cnc/cura-wasm-definitions).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FCloud-CNC%2Fcura-wasm?ref=badge_large)

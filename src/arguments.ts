@@ -18,7 +18,7 @@ export const generate = (progressHandlerName: string, overrides: overrideType[] 
   const args = [
     'slice',
     '-j',
-    'definitions/definition.def.json',
+    'definitions/printer.def.json',
     '-l',
     'Model.stl',
     '-o',

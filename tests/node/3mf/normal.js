@@ -5,9 +5,9 @@
 //Imports
 const {expect} = require('chai');
 const {hash, saveFiles} = require('../utils');
+const {resolveDefinition} = require('cura-wasm-definitions');
 const CuraWASM = require('../../../dist/cjs/main');
 const fs = require('fs');
-const ResolveDefinition = require('cura-wasm-definitions');
 
 //Get the file
 const file = fs.readFileSync('./demo/benchy.3mf').buffer;
@@ -18,7 +18,7 @@ module.exports = () =>
   it('will slice the file via transfering the ArrayBuffer', async () =>
   {
     const slicer = new CuraWASM({
-      definition: ResolveDefinition('ultimaker2')
+      definition: resolveDefinition('ultimaker2')
     });
 
     const gcode = await slicer.slice(file, '3mf');

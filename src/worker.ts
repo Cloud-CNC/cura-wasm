@@ -11,7 +11,8 @@ import {Observer} from 'observable-fns/dist/observable';
 import {override} from './types';
 import CuraEngine from './CuraEngine.js';
 import definitions from './definitions/index';
-import type {Definition} from 'cura-wasm-definitions/src/types';
+import type {CombinedDefinition} from 'cura-wasm-definitions/src/types';
+import fs from 'fs';
 
 /**
  * `EmscriptenModule` with a few tweaks
@@ -25,6 +26,7 @@ interface EmscriptenModule2 extends EmscriptenModule
 //Instance variables
 let engine: EmscriptenModule2;
 let proxyObserver: Observer<any>;
+let extruderCount: number;
 
 /**
  * Cura WASM's low-level singleton for interfacing with Cura Engine
@@ -57,7 +59,7 @@ const worker = {
    * Add 3D printer definition files to the virtual filesystem
    * @param definition The printer definition
    */
-  async addDefinitions(definition: Definition): Promise<void>
+  async addDefinitions(definition: CombinedDefinition): Promise<void>
   {
     engine.FS.mkdir('/definitions');
 
@@ -74,7 +76,15 @@ const worker = {
     }
 
     //Add secondary definition
-    engine.FS.writeFile('/definitions/definition.def.json', JSON.stringify(definition));
+    engine.FS.writeFile('/definitions/printer.def.json', JSON.stringify(definition.printer));
+
+    for (const [i, extruder] of definition.extruders.entries())
+    {
+      engine.FS.writeFile(`/definitions/extruder-${i}.def.json`, JSON.stringify(extruder));
+    }
+
+    //Store extruder count for removal, later
+    extruderCount = definition.extruders.length;
   },
 
   observeProgress: () => new Observable(observer =>
@@ -189,9 +199,14 @@ const worker = {
     }
 
     //Remove secondary definition
-    engine.FS.unlink('/definitions/definition.def.json');
+    engine.FS.unlink('/definitions/printer.def.json');
 
-    engine.FS.rmdir('/definitions');
+    for (let i = 0; i < extruderCount; i++)
+    {
+      engine.FS.unlink(`/definitions/extruder-${i}.def.json`);
+    }
+
+    //engine.FS.rmdir('/definitions');
   }
 };
 

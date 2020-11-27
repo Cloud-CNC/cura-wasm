@@ -4,9 +4,9 @@
 
 //Imports
 import {BlobWorker, spawn, Thread, Transfer} from 'threads';
-import {Definition} from 'cura-wasm-definitions/src/types';
+import {CombinedDefinition, Extruder, Printer} from 'cura-wasm-definitions/src/types';
 import {EventEmitter} from 'events';
-import definitions from 'cura-wasm-definitions/src/definitions/index';
+import {printers} from 'cura-wasm-definitions/src/definitions/index';
 import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
 import type {override} from './types';
 
@@ -16,7 +16,12 @@ import WorkerText from './worker';
 /**
  * Default printer definition
  */
-const defaultDefinition: Definition = definitions.fdmprinter;
+const defaultDefinition: CombinedDefinition = {
+  extruders: [
+    <Extruder>printers.fdmextruder
+  ],
+  printer: <Printer>printers.fdmprinter
+};
 
 /**
  * Duplicate definition of non-exported ArbitraryThreadType from threads/dist/master/spawn.d.ts
@@ -33,7 +38,7 @@ interface config
    * 
    * Default: `fdmprinter`
    */
-  definition: Definition,
+  definition: CombinedDefinition,
 
   /**
    * Overrides for the specified 3D printer definition

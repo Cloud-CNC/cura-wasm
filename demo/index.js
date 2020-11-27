@@ -5,7 +5,7 @@
 //Imports
 import {CuraWASM} from '../src/index.ts';
 import {FileFormats} from 'unified-3d-loader';
-import ResolveDefinition from 'cura-wasm-definitions';
+import {resolveDefinition} from 'cura-wasm-definitions';
 
 //Update file input accept attribute
 const extensions = [];
@@ -47,7 +47,7 @@ document.getElementById('slice').addEventListener('click', async () =>
 
   //Create a slicer
   const slicer = new CuraWASM({
-    definition: ResolveDefinition('ultimaker2'),
+    definition: resolveDefinition('ultimaker2'),
     overrides: window.overrides,
     transfer: window.transferFile
   });
