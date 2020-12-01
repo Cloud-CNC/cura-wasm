@@ -3,10 +3,10 @@
  */
 
 //Imports
+const {CuraWASM} = require('../../../dist/cjs');
 const {expect} = require('chai');
 const {hash, saveFiles} = require('../utils');
 const {resolveDefinition} = require('cura-wasm-definitions');
-const CuraWASM = require('../../../dist/cjs/main');
 const fs = require('fs');
 
 //Get the file

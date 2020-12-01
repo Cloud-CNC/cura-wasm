@@ -5,7 +5,6 @@
 //Imports
 import {terser} from 'rollup-plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
-import copy from 'rollup-plugin-copy';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import threads from 'rollup-plugin-threads';
@@ -21,6 +20,13 @@ const onwarn = (warning, warn) =>
   {
     warn(warning);
   }
+};
+
+/**
+ * Typescript Rollup plugin options
+ */
+const typescriptOptions = {
+  useTsconfigDeclarationDir: true
 };
 
 //CJS
@@ -47,10 +53,10 @@ const cjs = {
     }),
     json(),
     commonjs(),
-    typescript(),
+    typescript(typescriptOptions),
     threads({
       external: [
-        'child_process',,
+        'child_process',
         'events',
         'os',
         'path',
@@ -62,25 +68,15 @@ const cjs = {
         resolve(),
         json(),
         commonjs(),
-        typescript()
+        typescript(typescriptOptions)
       ],
       onwarn
     }),
-    terser(),
-    copy({
-      //Re-exports
-      targets: [
-        {
-          src: 'src/main-cjs.js',
-          dest: 'dist/cjs/',
-          rename: 'main.js'
-        }
-      ]
-    })
+    terser()
   ],
   output: [
     {
-      dir: 'dist/cjs',
+      file: 'dist/cjs.js',
       format: 'cjs'
     }
   ],
@@ -103,7 +99,7 @@ const es = {
     }),
     json(),
     commonjs(),
-    typescript(),
+    typescript(typescriptOptions),
     threads({
       include: '**/worker.ts',
       plugins: [
@@ -113,24 +109,14 @@ const es = {
         }),
         json(),
         commonjs(),
-        typescript()
+        typescript(typescriptOptions)
       ]
     }),
-    terser(),
-    copy({
-      //Re-exports
-      targets: [
-        {
-          src: 'src/main-es.js',
-          dest: 'dist/es/',
-          rename: 'main.js'
-        }
-      ]
-    })
+    terser()
   ],
   output: [
     {
-      dir: 'dist/es',
+      file: 'dist/es.js',
       format: 'es'
     }
   ],

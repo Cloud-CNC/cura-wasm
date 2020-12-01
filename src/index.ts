@@ -10,7 +10,7 @@ import {printers} from 'cura-wasm-definitions/src/definitions/index';
 import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
 import type {override} from './types';
 
-//@ts-ignore Import worker (Bundled with `rollup-plugin-bundle-imports`)
+//@ts-ignore Import worker (Bundled with `rollup-plugin-threads`)
 import WorkerText from './worker';
 
 /**

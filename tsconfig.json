@@ -2,11 +2,11 @@
   "compilerOptions": {
     "allowJs": true,
     "declaration": true,
+    "declarationDir": "dist",
     "esModuleInterop": true,
     "isolatedModules": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "outDir": "dist/tsc",
     "resolveJsonModule": true,
     "strict": true,
     "target": "esnext"
@@ -15,8 +15,6 @@
     "src"
   ],
   "exclude": [
-    "src/main-cjs.js",
-    "src/main-es.js",
-    "src/definitions/generator.js"
+    "src/CuraEngine.js"
   ]
 }

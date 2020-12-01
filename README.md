@@ -32,7 +32,7 @@ Unless you have your own 3D printer definition (That aren't included with Cura),
 ### Examples
 * Basic Benchy + Ultimaker 2 example
 ```Javascript
-import CuraWASM from 'cura-wasm';
+import {CuraWASM} from 'cura-wasm';
 import {resolveDefinition} from 'cura-wasm-definitions';
 
 const main = async () =>

@@ -4,7 +4,7 @@
 
 //Imports
 const {resolveDefinition} = require('cura-wasm-definitions');
-const CuraWASM = require('../dist/cjs/main');
+const CuraWASM = require('../dist/cjs');
 const fs = require('fs');
 
 //Get the file
