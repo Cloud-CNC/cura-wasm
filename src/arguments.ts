@@ -45,7 +45,7 @@ export const generate = (progressHandlerName: string, overrides: overrideType[] 
       }
       else
       {
-        args.push('-s', override.scope, `${override.key}=${override.value}`);
+        args.push(`-${override.scope}`, '-s', `${override.key}=${override.value}`);
       }
     }
   }

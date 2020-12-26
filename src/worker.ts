@@ -12,7 +12,6 @@ import {override} from './types';
 import CuraEngine from './CuraEngine.js';
 import definitions from './definitions/index';
 import type {CombinedDefinition} from 'cura-wasm-definitions/src/types';
-import fs from 'fs';
 
 /**
  * `EmscriptenModule` with a few tweaks
@@ -163,6 +162,12 @@ const worker = {
       //Generate CLI arguments
       const args = generate(progressHandlerName, overrides, verbose);
 
+      //Log
+      if (verbose)
+      {
+        console.log(`Calling Cura Engine with ${args.join(' ')}`);
+      }
+
       //Run Cura (Blocking)
       engine.callMain(args);
 
@@ -206,7 +211,7 @@ const worker = {
       engine.FS.unlink(`/definitions/extruder-${i}.def.json`);
     }
 
-    //engine.FS.rmdir('/definitions');
+    engine.FS.rmdir('/definitions');
   }
 };
 

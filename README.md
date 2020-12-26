@@ -27,7 +27,7 @@ npm i cura-wasm
 Cura WASM ships with both ES6 and CJS exports. The ES6 version is built with browsers in mind and likely won't work on NodeJS; the CJS version is built with NodeJS in mind and almost certainly won't work on browsers due to lacking standard modules.
 
 ### Definitions
-Unless you have your own 3D printer definition (That aren't included with Cura), you should use [`cura-wasm-definitions`](https://github.com/cloud-cnc/cura-wasm-definitions) for 3D printer defintions.
+Unless you have your own 3D printer definition (That isn't included with Cura), you should use [`cura-wasm-definitions`](https://github.com/cloud-cnc/cura-wasm-definitions) for 3D printer defintions.
 
 ### Examples
 * Basic Benchy + Ultimaker 2 example
