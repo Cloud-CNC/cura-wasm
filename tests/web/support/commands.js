@@ -31,10 +31,10 @@
 Cypress.Commands.add('progressIncreases', selector =>
 {
   cy.get(selector, {
-    timeout: 60000
+    timeout: 2000
   }).should('have.text', '0%');
 
   cy.get(selector, {
-    timeout: 60000
+    timeout: 90000
   }).should('have.text', '100%');
 });
