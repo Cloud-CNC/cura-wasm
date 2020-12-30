@@ -14,7 +14,7 @@ git clone https://github.com/Ultimaker/CuraEngine.git
 cd CuraEngine
 
 #Apply the patch
-git checkout 0852f3cd5e909c9ebb459befb499292460da97d4
+git checkout d509e7e14975e55a02667b4857640c0fe7ee069f
 git apply --ignore-space-change ../CuraEngine.patch
 
 #Build CuraEngine with emscripten

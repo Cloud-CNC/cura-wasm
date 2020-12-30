@@ -2,7 +2,7 @@
 
 FROM ubuntu
 
-WORKDIR /usr/cura-wasm
+WORKDIR /home/cura-wasm
 
 ARG DEBIAN_FRONTEND=noninteractive
 

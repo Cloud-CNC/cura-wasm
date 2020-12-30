@@ -21,7 +21,7 @@ window.getFile = async () =>
   return await document.getElementById('upload').files[0];
 };
 
-window.handleGcode = async gcode =>
+window.handleFinish = async gcode =>
 {
   //Create the download link and download the file
   const blob = new Blob([gcode], {
@@ -47,6 +47,7 @@ document.getElementById('slice').addEventListener('click', async () =>
 
   //Create a slicer
   const slicer = new CuraWASM({
+    command: window.command,
     definition: resolveDefinition('ultimaker2'),
     overrides: window.overrides,
     transfer: window.transferFile
@@ -61,8 +62,10 @@ document.getElementById('slice').addEventListener('click', async () =>
 
   //Slice
   const start = Date.now();
-  const gcode = await slicer.slice(bytes, extension);
+  const {gcode, metadata} = await slicer.slice(bytes, extension);
   const end = Date.now();
+
+  console.log(metadata);
 
   //Used by E2E tests
   window.afterFile = bytes;
@@ -70,15 +73,24 @@ document.getElementById('slice').addEventListener('click', async () =>
   //Calculate elapsed time
   const elapsed = new Date(end - start);
 
-  //Display elapsed time
-  document.getElementById('time').innerText = `Elapsed time: ${elapsed.valueOf()}ms`;
+  //Format estimated time
+  const estimatedTime = `${Math.floor(metadata.printTime / 3600)}h ${Math.floor(metadata.printTime % 3600 / 60)}m ${Math.floor(metadata.printTime % 3600 % 60)}s`;
+
+  //Display metadata
+  document.getElementById('metadata').innerText = `Elapsed time: ${elapsed.valueOf()}ms
+GCODE flavor: ${metadata.flavor}
+Estimated print time: ${estimatedTime}
+Nozzle Size: ${metadata.nozzleSize}mm
+Filament Usage: ${metadata.filamentUsage}mm³
+Material 1 usage: ${metadata.material1Usage}mm³
+Material 2 usage: ${metadata.material2Usage}mm³`;
 
   //Get download button
   const download = document.getElementById('download');
 
   //Set download callback
   download.disabled = false;
-  download.addEventListener('click', () => window.handleGcode(gcode));
+  download.addEventListener('click', () => window.handleFinish(gcode, metadata));
 
   //Cleanup
   await slicer.destroy();

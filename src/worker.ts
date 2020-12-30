@@ -8,7 +8,7 @@ import {expose, Transfer, TransferDescriptor} from 'threads';
 import {generate} from './arguments';
 import {Observable} from 'observable-fns';
 import {Observer} from 'observable-fns/dist/observable';
-import {override} from './types';
+import {Metadata, override} from './types';
 import CuraEngine from './CuraEngine.js';
 import definitions from './definitions/index';
 import type {CombinedDefinition} from 'cura-wasm-definitions/src/types';
@@ -23,9 +23,10 @@ interface EmscriptenModule2 extends EmscriptenModule
 }
 
 //Instance variables
-let engine: EmscriptenModule2;
-let proxyObserver: Observer<any>;
-let extruderCount: number;
+let engine = null as EmscriptenModule2 | null;
+let extruderCount = null as number | null;
+let progressObserver = null as Observer<any> | null;
+let metadataObserver = null as Observer<any> | null;
 
 /**
  * Cura WASM's low-level singleton for interfacing with Cura Engine
@@ -60,6 +61,12 @@ const worker = {
    */
   async addDefinitions(definition: CombinedDefinition): Promise<void>
   {
+    //Type guard
+    if (engine == null)
+    {
+      throw new Error('Attempting to add definitions before initialization!');
+    }
+
     engine.FS.mkdir('/definitions');
 
     //Add primary definitions
@@ -86,21 +93,39 @@ const worker = {
     extruderCount = definition.extruders.length;
   },
 
+  /**
+   * Observe slice progress
+   */
   observeProgress: () => new Observable(observer =>
   {
-    proxyObserver = observer;
+    progressObserver = observer;
+  }),
+
+  /**
+   * Observe slice metadata
+   */
+  observeMetadata: () => new Observable(observer =>
+  {
+    metadataObserver = observer;
   }),
 
   /**
    * Run Cura
+   * @param command The Cura Engine launch command
    * @param overrides Cura overrides
    * @param verbose Wether or not to enable verbose logging in Cura
    * @param file The file
    * @param extension The file extension
    * @param progress The progress event handler
    */
-  async run(overrides: override[] | null, verbose: boolean | null, file: ArrayBuffer, extension: string): Promise<TransferDescriptor | Error>
+  async run(command: string | null, overrides: override[] | null, verbose: boolean | null, file: ArrayBuffer, extension: string): Promise<TransferDescriptor | Error>
   {
+    //Type guard
+    if (engine == null)
+    {
+      throw new Error('Attempting to run Cura Engine before initialization!');
+    }
+
     /**
      * The bias of the file converter progress (Range: 0-1)
      * 
@@ -120,9 +145,10 @@ const worker = {
     const stl = await convert(file, extension, converterProgress =>
     {
       //Emit progress
-      if (proxyObserver != null && proxyObserver.next != null)
+      if (progressObserver != null &&
+        progressObserver.next != null)
       {
-        proxyObserver.next(converterProgress * converterBias);
+        progressObserver.next(converterProgress * converterBias);
       }
     });
 
@@ -136,13 +162,10 @@ const worker = {
       //Write the file
       engine.FS.writeFile('Model.stl', stl);
 
-      //Generate the progress handler callback name
-      const progressHandlerName = 'cura-wasm-progress-callback';
-
       let previousSlicerProgress = 0;
 
       //@ts-ignore Register the progress handler (The globalThis context is hard coded into Cura; you'll have to recompile it to change this)
-      globalThis[progressHandlerName] = (slicerProgress: number) =>
+      globalThis['cura-wasm-progress-callback'] = (slicerProgress: number) =>
       {
         //Round the slicer progress
         slicerProgress = Math.round(100 * slicerProgress) / 100;
@@ -150,17 +173,43 @@ const worker = {
         if (slicerProgress != previousSlicerProgress)
         {
           //Emit progress
-          if (proxyObserver != null && proxyObserver.next != null)
+          if (progressObserver != null &&
+            progressObserver.next != null)
           {
-            proxyObserver.next((slicerProgress * slicerBias) + converterBias);
+            progressObserver.next((slicerProgress * slicerBias) + converterBias);
           }
 
           previousSlicerProgress = slicerProgress;
         }
       };
 
+      //@ts-ignore Register the metadata handler (The globalThis context is hard coded into Cura; you'll have to recompile it to change this)
+      globalThis['cura-wasm-metadata-callback'] = (
+        flavor: string,
+        printTime: number,
+        material1Usage: number,
+        material2Usage: number,
+        nozzleSize: number,
+        filamentUsage: number
+      ) =>
+      {
+        //Emit metadata
+        if (metadataObserver != null &&
+          metadataObserver.next != null)
+        {
+          metadataObserver.next({
+            flavor,
+            printTime,
+            material1Usage,
+            material2Usage,
+            nozzleSize,
+            filamentUsage
+          } as Metadata);
+        }
+      };
+
       //Generate CLI arguments
-      const args = generate(progressHandlerName, overrides, verbose);
+      const args = command == null ? generate(overrides, verbose) : command.split(' ');
 
       //Log
       if (verbose)
@@ -172,7 +221,7 @@ const worker = {
       engine.callMain(args);
 
       //@ts-ignore Delete the progress handler
-      delete globalThis[progressHandlerName];
+      delete globalThis['cura-wasm-progress-callback'];
 
       //Read the file (Uint8Array) and convert to an ArrayBuffer
       const gcode = engine.FS.readFile('Model.gcode').buffer;
@@ -191,6 +240,12 @@ const worker = {
    */
   async removeDefinitions(): Promise<void>
   {
+    //Type guard
+    if (engine == null || extruderCount == null)
+    {
+      throw new Error('Attempting to remove definitions before initialization!');
+    }
+
     //Remove primary definitions
     for (const rawDefinition in definitions)
     {

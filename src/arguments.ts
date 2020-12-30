@@ -7,12 +7,11 @@ import {override as overrideType} from './types';
 
 /**
  * Generate Cura CLI arguments
- * @param progressHandlerName The name of the Cura progress handler callback
  * @param definition The printer definition
  * @param overrides Cura overrides
  * @param verbose Wether or not to enable verbose logging in Cura
  */
-export const generate = (progressHandlerName: string, overrides: overrideType[] | null, verbose: boolean | null): string[] =>
+export const generate = (overrides: overrideType[] | null, verbose: boolean | null): string[] =>
 {
   //Initial arguments
   const args = [
@@ -23,8 +22,6 @@ export const generate = (progressHandlerName: string, overrides: overrideType[] 
     'Model.stl',
     '-o',
     'Model.gcode',
-    '--progress',
-    progressHandlerName
   ];
 
   //Verbose logging

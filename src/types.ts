@@ -28,3 +28,13 @@ export interface override
    */
   value: string
 }
+
+export interface Metadata
+{
+  flavor: string,
+  printTime: number,
+  material1Usage: number,
+  material2Usage: number,
+  nozzleSize: number,
+  filamentUsage: number
+}

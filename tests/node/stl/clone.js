@@ -22,7 +22,7 @@ module.exports = () =>
       transfer: false
     });
 
-    const gcode = await slicer.slice(file, 'stl');
+    const {gcode, metadata} = await slicer.slice(file, 'stl');
 
     //Optionally save
     if (saveFiles)
@@ -32,7 +32,16 @@ module.exports = () =>
 
     expect(file.byteLength).to.be.greaterThan(0);
 
-    expect(hash(gcode)).to.equal('e7f1d0a866ffc6ce9294d5c1a659430577a797ed891497a2637f0389a557c7ec');
+    expect(hash(gcode)).to.equal('2efc815ef0871a5aa0c0b4b09b4009ac3ace2fe37a48a366e4d06e0c5563a619');
+
+    expect(metadata).to.eql({
+      flavor: 'UltiGCode',
+      printTime: 9061,
+      material1Usage: 11172,
+      material2Usage: 0,
+      nozzleSize: 0.4,
+      filamentUsage: 11172
+    });
 
     await slicer.destroy();
   });

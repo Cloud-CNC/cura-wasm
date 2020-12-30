@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0b1bdeacf..0448a5d35 100644
+index 0b1bdeac..b168e6a4 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -97,7 +97,7 @@ if (ENABLE_MORE_COMPILER_OPTIMIZATION_FLAGS AND NOT (CMAKE_BUILD_TYPE_UPPER MATC
@@ -12,7 +12,7 @@ index 0b1bdeacf..0448a5d35 100644
  endif ()
  
 diff --git a/src/communication/CommandLine.cpp b/src/communication/CommandLine.cpp
-index e05aebf3e..631e032b7 100644
+index e05aebf3..08fe7281 100644
 --- a/src/communication/CommandLine.cpp
 +++ b/src/communication/CommandLine.cpp
 @@ -22,6 +22,8 @@
@@ -31,39 +31,42 @@ index e05aebf3e..631e032b7 100644
 +
 +    //Call progress handler with progress
 +    char js[100];
-+    std::sprintf(js, "globalThis[\"%s\"](%f)", progressHandler.c_str(), progress);
++    std::sprintf(js, "globalThis[\"cura-wasm-progress-callback\"](%f)", progress);
 +    emscripten_run_script(js);
  }
  
  void CommandLine::sliceNext()
-@@ -132,6 +139,13 @@ void CommandLine::sliceNext()
-                         exit(1);
-                     }
-                 }
-+                else if (argument.find("--progress") == 0)
-+                {
-+                    //Store progress handler name
-+                    argument_index++;
-+                    argument = arguments[argument_index];
-+                    progressHandler = argument;
-+                }
-                 else
-                 {
-                     logError("Unknown option: %s\n", argument.c_str());
-diff --git a/src/communication/CommandLine.h b/src/communication/CommandLine.h
-index 341ba6d65..41a71382c 100644
---- a/src/communication/CommandLine.h
-+++ b/src/communication/CommandLine.h
-@@ -145,6 +145,12 @@ public:
-     void sliceNext() override;
+diff --git a/src/gcodeExport.cpp b/src/gcodeExport.cpp
+index 5d75ea53..725f98c1 100644
+--- a/src/gcodeExport.cpp
++++ b/src/gcodeExport.cpp
+@@ -19,6 +19,8 @@
+ #include "utils/string.h" // MMtoStream, PrecisionedDouble
+ #include "WipeScriptConfig.h"
  
- private:
-+    /*
-+     * \brief The name of the progress handler to call on each progrss event
-+     * relative to the globalThis context within the worker.
-+     */
-+    std::string progressHandler;
++#include <emscripten.h>
 +
-     /*
-      * \brief The command line arguments that the application was called with.
-      */
+ namespace cura {
+ 
+ std::string transliterate(const std::string& text)
+@@ -273,6 +275,20 @@ std::string GCodeExport::getFileHeader(const std::vector<bool>& extruder_is_used
+         prefix << ";MAXZ:" << INT2MM(total_bounding_box.max.z) << new_line;
+     }
+ 
++    //Call metadata handler with metadata
++    char js[200];
++    std::sprintf(
++        js,
++        "globalThis[\"cura-wasm-metadata-callback\"](\"%s\", %d, %d, %d, %f, %d)",
++        flavorToString(flavor).c_str(),
++        ((print_time) ? static_cast<int>(*print_time) : 6666),
++        ((filament_used.size() >= 1)? static_cast<int>(filament_used[0]) : 6666),
++        ((filament_used.size() >= 2)? static_cast<int>(filament_used[1]) : 0),
++        Application::getInstance().current_slice->scene.extruders[0].settings.get<double>("machine_nozzle_size"),
++        int(getTotalFilamentUsed(0))
++    );
++    emscripten_run_script(js);
++
+     return prefix.str();
+ }
+ 

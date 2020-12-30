@@ -14,6 +14,8 @@
 * Uses Docker for C++ compilation (Enhanced reproducibility)
 * Ships with **everything** already compiled
 * Works in the browser and on NodeJS
+* Supports custom Cura Engine launch command
+* Provides print metadata (Filament usage, estimated time, etc.)
 * Thoroughly commented
 
 ## Install
@@ -39,6 +41,13 @@ const main = async () =>
 {
   //Create a new slicer
   const slicer = new CuraWASM({
+    /**
+     * Specify Cura Engine launch arguments (Identical to desktop Cura Engine)
+     * 
+     * NOTE: You CANNOT specify both this setting and overrides!
+     */
+    command: 'slice -j definitions/printer.def.json -l Model.stl -o Model.gcode',
+
     /*
      * The 3D printer definition to slice for (See the cura-wasm-definitions
      * repository or https://github.com/cloud-cnc/cura-wasm-definitions
@@ -49,6 +58,8 @@ const main = async () =>
     /*
      * Overrides for the current 3D printer definition (Passed to Cura Engine
      * with the -s CLI argument)
+     * 
+     * NOTE: You CANNOT specify both this setting and launch arguments!
      */
     overrides: [
       {
@@ -91,9 +102,9 @@ const main = async () =>
   });
 
   //Slice (This can take multiple minutes to resolve!)
-  const gcode = await slicer.slice(stl, 'stl');
+  const {gcode, metadata} = await slicer.slice(stl, 'stl');
 
-  //Do something with the GCODE (ArrayBuffer)
+  //Do something with the GCODE (ArrayBuffer) and metadata (Object)
 
   //Dispose (Reccomended but not necessary to call/intended for SPAs)
   slicer.dispose();

@@ -6,6 +6,7 @@
 module.exports = () =>
 {
   require('./normal')();
+  require('./command')();
   require('./clone')();
   require('./overrides')();
 };

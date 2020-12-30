@@ -21,7 +21,7 @@ module.exports = () =>
       definition: resolveDefinition('ultimaker2')
     });
 
-    const gcode = await slicer.slice(file, '3mf');
+    const {gcode, metadata} = await slicer.slice(file, '3mf');
 
     //Optionally save
     if (saveFiles)
@@ -31,7 +31,16 @@ module.exports = () =>
 
     expect(file.byteLength).to.be.equal(0);
 
-    expect(hash(gcode)).to.equal('e777ca6d8fb935ea823a5bf5324a979e0ad932339265ee08e45be6b17c6ad531');
+    expect(hash(gcode)).to.equal('44fc9aa6556c6504ff8bf83b553ee684e1fd7de1ec7f549fd75acebcdaf146fb');
+
+    expect(metadata).to.eql({
+      flavor: 'UltiGCode',
+      printTime: 9064,
+      material1Usage: 11172,
+      material2Usage: 0,
+      nozzleSize: 0.4,
+      filamentUsage: 11172
+    });
 
     await slicer.destroy();
   });

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Cura WASM With Overrides Tests
+ * @fileoverview Command Cura WASM Tests
  */
 
 //Imports
@@ -15,16 +15,11 @@ const file = fs.readFileSync('./demo/benchy.stl').buffer;
 //Export
 module.exports = () =>
 {
-  it('will slice the file via transfering the ArrayBuffer with overrides', async () =>
+  it('will slice the file via a launch command', async () =>
   {
     const slicer = new CuraWASM({
-      definition: resolveDefinition('ultimaker2'),
-      overrides: [
-        {
-          key: 'mesh_position_x',
-          value: '20'
-        }
-      ]
+      command: 'slice -j definitions/printer.def.json -l Model.stl -o Model.gcode',
+      definition: resolveDefinition('ultimaker2')
     });
 
     const {gcode, metadata} = await slicer.slice(file, 'stl');
@@ -32,16 +27,16 @@ module.exports = () =>
     //Optionally save
     if (saveFiles)
     {
-      fs.writeFileSync('./stl-overrides.gcode', new Uint8Array(gcode));
+      fs.writeFileSync('./stl-command.gcode', new Uint8Array(gcode));
     }
 
     expect(file.byteLength).to.be.equal(0);
 
-    expect(hash(gcode)).to.equal('6a9c8b059833bfa9149375e2474815de8079d4c2432d5bcfbbea0809cdc578b9');
+    expect(hash(gcode)).to.equal('2efc815ef0871a5aa0c0b4b09b4009ac3ace2fe37a48a366e4d06e0c5563a619');
 
     expect(metadata).to.eql({
       flavor: 'UltiGCode',
-      printTime: 9064,
+      printTime: 9061,
       material1Usage: 11172,
       material2Usage: 0,
       nozzleSize: 0.4,

@@ -8,7 +8,8 @@ import {CombinedDefinition, Extruder, Printer} from 'cura-wasm-definitions/src/t
 import {EventEmitter} from 'events';
 import {printers} from 'cura-wasm-definitions/src/definitions/index';
 import type {FunctionThread, ModuleThread} from 'threads/dist/types/master';
-import type {override} from './types';
+import type {Metadata, override} from './types';
+import {Observable} from 'observable-fns';
 
 //@ts-ignore Import worker (Bundled with `rollup-plugin-threads`)
 import WorkerText from './worker';
@@ -34,6 +35,17 @@ declare type ArbitraryThreadType = FunctionThread<any, any> & ModuleThread<any>;
 interface config
 {
   /**
+   * The Cura Engine launch command (Instead of setting overrides)
+   * 
+   * There's a 99% chance you want to start your command with
+   * `slice -j definitions/printer.def.json -l Model.stl -o Model.gcode`
+   * regardless of what overrides you're using.
+   * 
+   * Note: You cannot use overrides with this setting!
+   */
+  command: string | null,
+
+  /**
    * The 3D printer definition to use
    * 
    * Default: `fdmprinter`
@@ -41,7 +53,9 @@ interface config
   definition: CombinedDefinition,
 
   /**
-   * Overrides for the specified 3D printer definition
+   * Overrides for the specified 3D printer definition (Instead of a launch command)
+   * 
+   * Note: You cannot use the command setting with this setting!
    */
   overrides: override[],
 
@@ -91,8 +105,15 @@ export class CuraWASM extends EventEmitter
   {
     super();
 
+    //Prevent consumer specifying both launch command and overrides
+    if (config.command != null && config.overrides != null)
+    {
+      throw new Error('You CANNOT specify both launch arguments and overrides! (Pick one)');
+    }
+
     //Store config with defaults
     this.config = {
+      command: null,
       definition: defaultDefinition,
       overrides: [],
       transfer: true,
@@ -127,9 +148,9 @@ export class CuraWASM extends EventEmitter
    * Slice the provided file using the settings specified in the constructor
    * @param file The raw file to slice
    * @param extension The file extension (Used for determining the correct parser)
-   * @returns The raw, sliced GCODE
+   * @returns The raw, sliced GCODE and the print metadata
    */
-  async slice(file: ArrayBuffer, extension: string): Promise<ArrayBuffer>
+  async slice(file: ArrayBuffer, extension: string)
   {
     //Make sure we've loaded emscripten
     if (!this.loaded)
@@ -139,9 +160,13 @@ export class CuraWASM extends EventEmitter
 
     //If the transfer option is true, convert the model to a ThreadJS transferable otherwise have ThreadsJS clone the arraybuffer
     const bytes = this.config.transfer ? Transfer(file) : file;
+    
+    //Get worker observers
+    const progressObserver = this.worker.observeProgress() as Observable<any>;
+    const metadataObserver = this.worker.observeMetadata() as Observable<any>;
 
     //Observe the progress
-    this.worker.observeProgress().subscribe(progress =>
+    progressObserver.subscribe((progress: number) =>
     {
       //Normalize progress
       progress = Math.trunc(100 * progress);
@@ -156,8 +181,15 @@ export class CuraWASM extends EventEmitter
       }
     });
 
+    //Observe the metadata
+    let metadata: Metadata | null = null;
+    metadataObserver.subscribe((eventMetadata: Metadata) =>
+    {
+      //Save for later
+      metadata = eventMetadata;
+    });
     //Run Cura
-    const gcode = <Error | ArrayBuffer>await this.worker.run(this.config.overrides, this.config.verbose, bytes, extension.toLowerCase());
+    const gcode = await this.worker.run(this.config.command, this.config.overrides, this.config.verbose, bytes, extension.toLowerCase()) as Error | ArrayBuffer;
 
     //Handle errors
     if (gcode instanceof Error)
@@ -165,8 +197,16 @@ export class CuraWASM extends EventEmitter
       throw gcode;
     }
 
-    //Return GCODE
-    return gcode;
+    //Handle edge cases where the metadata event hasn't been fired but Cura Engine has finished slicing
+    if (metadata == null)
+    {
+      this.log('Metadata event has not fired yet! (This is likely a bug!)');
+    }
+
+    return {
+      gcode,
+      metadata
+    };
   }
 
   /**

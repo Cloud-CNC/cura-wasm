@@ -6,13 +6,16 @@
 /**
  * Handle gcode output and verify its hash
  * @param {string} referenceHash The reference hash to compare the outputted file against
+ * @param {object} referenceMetadata The reference metadata to compare the outputted metadata agains
  * @param {Function} done Mocha done callback
  */
-const handleGcode = (referenceHash, done) => async gcode =>
+const handleFinish = (referenceHash, referenceMetadata, done) => async (gcode, metadata) =>
 {
   expect(gcode.byteLength).to.be.greaterThan(0);
 
   expect(await hash(gcode)).to.equal(referenceHash);
+
+  expect(metadata).to.eql(referenceMetadata);
 
   done();
 };
@@ -64,7 +67,7 @@ describe('cura wasm', () =>
       cy.get('#slice').should('be.visible');
       cy.get('#progress').should('be.visible');
       cy.get('#percent').should('be.visible');
-      cy.get('#time').should('be.visible');
+      cy.get('#metadata').should('be.visible');
       cy.get('#download').should('be.visible');
     });
 
@@ -73,7 +76,42 @@ describe('cura wasm', () =>
       //Mocks
       cy.window().then(window =>
       {
-        window.handleGcode = handleGcode('e7f1d0a866ffc6ce9294d5c1a659430577a797ed891497a2637f0389a557c7ec', done);
+        window.handleFinish = handleFinish('2efc815ef0871a5aa0c0b4b09b4009ac3ace2fe37a48a366e4d06e0c5563a619', {
+          flavor: 'UltiGCode',
+          printTime: 9061,
+          material1Usage: 11172,
+          material2Usage: 0,
+          nozzleSize: 0.4,
+          filamentUsage: 11172
+        }, done);
+
+        //Slice
+        cy.get('#slice').click();
+        cy.progressIncreases('#percent');
+        cy.get('#download').click();
+      });
+
+      cy.window().then(window =>
+      {
+        expect(window.afterFile.byteLength).to.equal(0);
+      });
+    });
+
+    it('will slice the file via a launch command', done =>
+    {
+      //Mocks
+      cy.window().then(window =>
+      {
+        window.command = 'slice -j definitions/printer.def.json -l Model.stl -o Model.gcode';
+
+        window.handleFinish = handleFinish('2efc815ef0871a5aa0c0b4b09b4009ac3ace2fe37a48a366e4d06e0c5563a619', {
+          flavor: 'UltiGCode',
+          printTime: 9061,
+          material1Usage: 11172,
+          material2Usage: 0,
+          nozzleSize: 0.4,
+          filamentUsage: 11172
+        }, done);
 
         //Slice
         cy.get('#slice').click();
@@ -95,7 +133,14 @@ describe('cura wasm', () =>
         //Clone the file
         window.transferFile = false;
 
-        window.handleGcode = handleGcode('e7f1d0a866ffc6ce9294d5c1a659430577a797ed891497a2637f0389a557c7ec', done);
+        window.handleFinish = handleFinish('2efc815ef0871a5aa0c0b4b09b4009ac3ace2fe37a48a366e4d06e0c5563a619', {
+          flavor: 'UltiGCode',
+          printTime: 9061,
+          material1Usage: 11172,
+          material2Usage: 0,
+          nozzleSize: 0.4,
+          filamentUsage: 11172
+        }, done);
 
         //Slice
         cy.get('#slice').click();
@@ -114,7 +159,14 @@ describe('cura wasm', () =>
       //Mocks
       cy.window().then(window =>
       {
-        window.handleGcode = handleGcode('8a3c52fd73736baea9e3c8f29e4c05938c42ad9c72ffea9a9dbe71530268098b', done);
+        window.handleFinish = handleFinish('6a9c8b059833bfa9149375e2474815de8079d4c2432d5bcfbbea0809cdc578b9', {
+          flavor: 'UltiGCode',
+          printTime: 9064,
+          material1Usage: 11172,
+          material2Usage: 0,
+          nozzleSize: 0.4,
+          filamentUsage: 11172
+        }, done);
 
         window.overrides = [
           {
@@ -163,7 +215,14 @@ describe('cura wasm', () =>
       //Mocks
       cy.window().then(window =>
       {
-        window.handleGcode = handleGcode('e777ca6d8fb935ea823a5bf5324a979e0ad932339265ee08e45be6b17c6ad531', done);
+        window.handleFinish = handleFinish('44fc9aa6556c6504ff8bf83b553ee684e1fd7de1ec7f549fd75acebcdaf146fb', {
+          flavor: 'UltiGCode',
+          printTime: 9064,
+          material1Usage: 11172,
+          material2Usage: 0,
+          nozzleSize: 0.4,
+          filamentUsage: 11172
+        }, done);
 
         //Slice
         cy.get('#slice').click();
