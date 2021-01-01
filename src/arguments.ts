@@ -15,13 +15,7 @@ export const generate = (overrides: overrideType[] | null, verbose: boolean | nu
 {
   //Initial arguments
   const args = [
-    'slice',
-    '-j',
-    'definitions/printer.def.json',
-    '-l',
-    'Model.stl',
-    '-o',
-    'Model.gcode',
+    'slice'
   ];
 
   //Verbose logging
@@ -29,6 +23,14 @@ export const generate = (overrides: overrideType[] | null, verbose: boolean | nu
   {
     args.push('-v');
   }
+
+  //Definition and output
+  args.push(
+    '-j',
+    'definitions/printer.def.json',
+    '-o',
+    'Model.gcode'
+  );
 
   //Overrides
   if (overrides != null)
@@ -46,6 +48,12 @@ export const generate = (overrides: overrideType[] | null, verbose: boolean | nu
       }
     }
   }
+
+  //Input (The HAS to be after the overrides)
+  args.push(
+    '-l',
+    'Model.stl',
+  );
 
   return args;
 };

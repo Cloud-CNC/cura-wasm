@@ -15,7 +15,12 @@ const hash = (raw, algorithm = 'sha256') =>
   return crypto.createHash(algorithm).update(new Uint8Array(raw)).digest('hex');
 };
 
-const saveFiles = !!process.env.save_files;
+/**
+ * If you want to save the GCODE output from running Node unit tests,
+ * add `SAVE_FILES=true` to your environment. This is useful when
+ * recalculating hashes for tests.
+ */
+const saveFiles = !!process.env.SAVE_FILES;
 
 //Export
 module.exports = {

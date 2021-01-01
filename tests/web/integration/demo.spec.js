@@ -159,19 +159,23 @@ describe('cura wasm', () =>
       //Mocks
       cy.window().then(window =>
       {
-        window.handleFinish = handleFinish('6a9c8b059833bfa9149375e2474815de8079d4c2432d5bcfbbea0809cdc578b9', {
+        window.handleFinish = handleFinish('d7e8d30ac5e50aba611403b3c88e46fc05c0404ed317e752285bf0bf6502ab28', {
           flavor: 'UltiGCode',
-          printTime: 9064,
-          material1Usage: 11172,
+          printTime: 5285,
+          material1Usage: 12315,
           material2Usage: 0,
           nozzleSize: 0.4,
-          filamentUsage: 11172
+          filamentUsage: 12315
         }, done);
 
         window.overrides = [
           {
             key: 'mesh_position_x',
             value: '20'
+          },
+          {
+            key: 'layer_height',
+            value: '0.2'
           }
         ];
 

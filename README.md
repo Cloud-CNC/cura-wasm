@@ -42,11 +42,14 @@ const main = async () =>
   //Create a new slicer
   const slicer = new CuraWASM({
     /**
-     * Specify Cura Engine launch arguments (Identical to desktop Cura Engine)
+     * Specify Cura Engine launch arguments (Identical to desktop Cura Engine).
+     * 
+     * If you find that "-s" overrides aren't taking effect, make sure that you
+     * order your arguments correctly.
      * 
      * NOTE: You CANNOT specify both this setting and overrides!
      */
-    command: 'slice -j definitions/printer.def.json -l Model.stl -o Model.gcode',
+    command: 'slice -j definitions/printer.def.json -o Model.gcode -s layer_height=0.06 -l Model.stl',
 
     /*
      * The 3D printer definition to slice for (See the cura-wasm-definitions
