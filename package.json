@@ -1,6 +1,6 @@
 {
   "name": "cura-wasm",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Cura Engine powered by Web Assembly (WASM)",
   "main": "dist/cjs.js",
   "module": "dist/es.js",
@@ -68,7 +68,7 @@
     "nollup": "^0.12.3",
     "normalize-name": "^1.0.1",
     "nyc": "^15.1.0",
-    "quickchart-js": "^1.0.3",
+    "quickchart-js": "^1.0.5",
     "rollup": "^2.30.0",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-threads": "^1.0.0",
