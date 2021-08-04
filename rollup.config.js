@@ -3,15 +3,23 @@
  */
 
 //Imports
-import {terser} from 'rollup-plugin-terser';
 import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import threads from 'rollup-plugin-threads';
-import typescript from 'rollup-plugin-typescript2';
+import typescript, {RPT2Options} from 'rollup-plugin-typescript2';
+import {defineConfig, RollupWarning, WarningHandler} from 'rollup';
+import {terser} from 'rollup-plugin-terser';
+import pkg from './package.json';
+
+/**
+ * External packages
+ */
+const external = Object.keys(pkg.dependencies);
 
 /**
  * Rollup event handler
+ * @param {RollupWarning} warning 
+ * @param {WarningHandler} warn 
  */
 const onwarn = (warning, warn) =>
 {
@@ -24,49 +32,35 @@ const onwarn = (warning, warn) =>
 
 /**
  * Typescript Rollup plugin options
+ * @type {RPT2Options}
  */
 const typescriptOptions = {
   useTsconfigDeclarationDir: true
 };
 
-//CJS
-const cjs = {
-  external: [
-    'child_process',
-    'events',
-    'os',
-    'path',
-    'tty',
-    'util'
+//Export
+export default defineConfig({
+  input: 'src/index.ts',
+  output: [
+    {
+      file: 'dist/cjs.js',
+      format: 'cjs'
+    },
+    {
+      file: 'dist/es.js',
+      format: 'es'
+    }
   ],
-  input: [
-    'src/index.ts'
-  ],
+  external,
   plugins: [
-    resolve({
-      browser: false,
-      preferBuiltins: true,
-      //Force Rollup to use the CJS version of Threads JS
-      mainFields: [
-        'main'
-      ]
-    }),
-    json(),
+    resolve(),
     commonjs(),
     typescript(typescriptOptions),
     threads({
-      external: [
-        'child_process',
-        'events',
-        'os',
-        'path',
-        'tty',
-        'util'
-      ],
       include: '**/worker.ts',
+      external,
       plugins: [
         resolve(),
-        json(),
         commonjs(),
         typescript(typescriptOptions)
       ],
@@ -74,54 +68,5 @@ const cjs = {
     }),
     terser()
   ],
-  output: [
-    {
-      file: 'dist/cjs.js',
-      format: 'cjs'
-    }
-  ],
   onwarn
-};
-
-//ES
-const es = {
-  input: [
-    'src/index.ts'
-  ],
-  plugins: [
-    resolve({
-      browser: true,
-      preferBuiltins: false,
-      //Force Rollup to use the CJS version of Threads JS
-      mainFields: [
-        'main'
-      ]
-    }),
-    json(),
-    commonjs(),
-    typescript(typescriptOptions),
-    threads({
-      include: '**/worker.ts',
-      plugins: [
-        resolve({
-          browser: true,
-          preferBuiltins: false
-        }),
-        json(),
-        commonjs(),
-        typescript(typescriptOptions)
-      ]
-    }),
-    terser()
-  ],
-  output: [
-    {
-      file: 'dist/es.js',
-      format: 'es'
-    }
-  ],
-  onwarn
-};
-
-//Export
-export default [cjs, es];
+});
