@@ -3,11 +3,13 @@
  */
 
 //Imports
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import threads from 'rollup-plugin-threads';
-import typescript, {RPT2Options} from 'rollup-plugin-typescript2';
-import {defineConfig, RollupWarning, WarningHandler} from 'rollup';
+import typescript from 'rollup-plugin-typescript2';
+import wasm from '@rollup/plugin-wasm';
+import {defineConfig} from 'rollup';
 import {terser} from 'rollup-plugin-terser';
 import pkg from './package.json';
 
@@ -18,8 +20,8 @@ const external = Object.keys(pkg.dependencies);
 
 /**
  * Rollup event handler
- * @param {RollupWarning} warning 
- * @param {WarningHandler} warn 
+ * @param {import('rollup').RollupWarning} warning 
+ * @param {import('rollup').WarningHandler} warn 
  */
 const onwarn = (warning, warn) =>
 {
@@ -32,7 +34,7 @@ const onwarn = (warning, warn) =>
 
 /**
  * Typescript Rollup plugin options
- * @type {RPT2Options}
+ * @type {import('rollup-plugin-typescript2').RPT2Options}
  */
 const typescriptOptions = {
   useTsconfigDeclarationDir: true
@@ -44,7 +46,8 @@ export default defineConfig({
   output: [
     {
       file: 'dist/cjs.js',
-      format: 'cjs'
+      format: 'cjs',
+      exports: 'default'
     },
     {
       file: 'dist/es.js',
@@ -56,13 +59,25 @@ export default defineConfig({
     resolve(),
     commonjs(),
     typescript(typescriptOptions),
+    alias({
+      entries: [
+        {
+          find: '@worker',
+          replacement: './src/worker.ts'
+        }
+      ]
+    }),
     threads({
       include: '**/worker.ts',
-      external,
+      // external,
       plugins: [
         resolve(),
         commonjs(),
-        typescript(typescriptOptions)
+        typescript(typescriptOptions),
+        wasm({
+          maxFileSize: Infinity
+        }),
+        terser()
       ],
       onwarn
     }),

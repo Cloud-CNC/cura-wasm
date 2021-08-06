@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     /* Basic Options */
-    "target": "ES2020",
-    "module": "CommonJS",
+    "target": "ESNext",
+    "module": "ESNext",
     "outDir": "dist",
+
+    /* Declarations */
+    "declaration": true,
+    "declarationDir": "dist",
 
     /* Strict Type-Checking Options */
     "strict": true,
@@ -24,5 +28,11 @@
     /* Advanced Options */
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+
+    /* Path Alias */
+    "baseUrl": ".",
+    "paths": {
+      "@worker": ["./src/worker.ts"]
+    }
   }
 }

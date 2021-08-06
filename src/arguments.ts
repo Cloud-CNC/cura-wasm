@@ -11,7 +11,7 @@ import {multiply} from 'mathjs';
  * * `global`: the override applies to all extruders
  * * `e[N]`: the override applies to the `n+1`th extruder
  */
-type Scope = 'global' | 'e0' | 'e1' | 'e2' | 'e3' | 'e4' | 'e5' | 'e6' | 'e7' | 'e8' | 'e9';
+type Scope = 'global' | 'e0' | 'e1' | 'e2' | 'e3' | 'e4' | 'e5' | 'e6' | 'e7' | 'e8' | 'e9' | string;
 
 /**
  * Cura argument override
