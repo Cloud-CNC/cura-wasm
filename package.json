@@ -2,7 +2,7 @@
   "name": "cura-wasm",
   "version": "2.0.0-alpha.0",
   "description": "Cura Engine for Web Assembly (WASM)",
-  "main": "dist/cjs.cjs",
+  "main": "dist/cjs.js",
   "module": "dist/es.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -25,32 +25,32 @@
     "wasmer"
   ],
   "author": "Cloud CNC",
-  "license": "(MIT OR AGPL-3.0-only)",
+  "license": "(MIT AND AGPL-3.0-only)",
   "bugs": {
     "url": "https://github.com/cloud-cnc/cura-wasm/issues"
   },
   "homepage": "https://github.com/cloud-cnc/cura-wasm#readme",
   "dependencies": {
-    "@rollup/plugin-commonjs": "^20.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.4",
     "@wasmer/wasi": "^0.12.0",
     "@wasmer/wasmfs": "^0.12.0",
     "mathjs": "^9.4.4",
     "observable-fns": "^0.6.1",
-    "rollup": "^2.55.1",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-threads": "^1.0.4",
-    "rollup-plugin-typescript2": "^0.30.0",
     "threads": "^1.6.5"
   },
   "devDependencies": {
-    "@rollup/plugin-alias": "^3.1.5",
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.4",
     "@rollup/plugin-wasm": "^5.1.2",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
     "ava": "^3.15.0",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.23.4",
+    "rollup": "^2.55.1",
+    "rollup-plugin-polyfill-node": "^0.7.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-threads": "^1.1.1",
+    "rollup-plugin-typescript2": "^0.30.0",
     "typescript": "^4.3.5"
   }
 }

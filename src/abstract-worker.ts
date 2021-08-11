@@ -9,7 +9,7 @@ import {TransferDescriptor} from 'threads';
 /**
  * Abstract background worker
  */
-abstract class AbstractWorker
+interface AbstractWorker
 {
   /**
    * Initialize the worker
@@ -18,7 +18,7 @@ abstract class AbstractWorker
    * @param files Files to add to the in-memory filesystem
    * @param verbose Whether or not to enable verbose logging
    */
-  abstract initialize(
+  initialize(
     args: string[],
     env: Record<string, string>,
     files: Record<string, ArrayBuffer>,
@@ -29,19 +29,19 @@ abstract class AbstractWorker
    * Get observers
    * @returns Metadata, progress observer
    */
-   abstract getObservers(): [Observable<any>, Observable<any>];
+  getObservers(): [Observable<any>, Observable<any>];
 
   /**
    * Slice the file
    * @param outputLocation Location of output
    * @returns GCODE buffer
    */
-  abstract slice(outputLocation: string): Promise<TransferDescriptor<Buffer>>;
+  slice(outputLocation: string): Promise<TransferDescriptor<Buffer>>;
 
   /**
    * Destroy the background worker
    */
-  abstract destroy(): Promise<void>;
+  destroy(): Promise<void>;
 
   [key: string]: any;
 }

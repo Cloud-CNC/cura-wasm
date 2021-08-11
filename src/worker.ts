@@ -4,6 +4,7 @@
 
 //Imports
 import browser from '@wasmer/wasi/lib/bindings/browser';
+import node from '@wasmer/wasi/lib/bindings/node';
 import {Observable/*, SubscriptionObserver*/} from 'observable-fns';
 import {WASI} from '@wasmer/wasi';
 import {WasmFs} from '@wasmer/wasmfs';
@@ -12,157 +13,163 @@ import CuraEngine from '../wapm_packages/cloud-cnc-bot/cura-engine@0.0.1-alpha.2
 import AbstractWorker from './abstract-worker';
 
 /**
- * Background worker singleton
+ * Private worker properties/methods
  */
-class Worker implements AbstractWorker
-{
+const state = {
   /**
    * Web Assembly filesystem
    */
-  private fs: WasmFs | undefined;
+  wasmFs: null as WasmFs | null,
 
   /**
    * Metadata observer
    */
-  private metadataObserver: Observable<any> | undefined;
+  metadataObserver: null as Observable<any> | null,
 
   /**
    * Metadata subscription
    */
-  //private metadataSubscription: SubscriptionObserver<any> | undefined;
+  //metadataSubscription: null as SubscriptionObserver<any> | null,
 
   /**
    * Progress observer
    */
-  private progressObserver: Observable<any> | undefined;
+  progressObserver: null as Observable<any> | null,
 
   /**
    * Progress subscription
    */
-  //private progressSubscription: SubscriptionObserver<any> | undefined;
+  //progressSubscription: null as SubscriptionObserver<any> | null,
 
   /**
-   * Web Assembly source
+   * Web Assembly instance
    */
-  private source: WebAssembly.WebAssemblyInstantiatedSource | undefined;
+  instance: null as WebAssembly.Instance | null,
 
   /**
    * Whether or not to enable verbose logging
    */
-  private verbose: boolean | undefined;
+  verbose: false,
 
   /**
    * System interface instance
    */
-  private wasi: WASI | undefined;
+  wasi: null as WASI | null
 
-  /**
-   * Log a message
-   * @param message Message to log
-   */
-  private log(message: string)
+};
+
+/**
+ * Log a message
+ * @param message Message to log
+ */
+const log = (message: string) =>
+{
+  if (state.verbose)
   {
-    if (this.verbose)
-    {
-      console.log(message);
-    }
+    console.log(message);
   }
+};
 
-  async initialize(
+/**
+ * Background worker singleton
+ */
+const worker = {
+  initialize: async (
     args: string[],
     env: Record<string, string>,
     files: Record<string, ArrayBuffer>,
     verbose: boolean
-  )
+  ) =>
   {
     //Update state
-    this.verbose = verbose;
+    state.verbose = verbose;
 
     //Initialize the observers
-    this.metadataObserver = new Observable(()/*observer*/ =>
+    state.metadataObserver = new Observable(()/*observer*/ =>
     {
       //this.metadataSubscription = observer;
     });
 
-    this.progressObserver = new Observable(()/*observer*/ =>
+    state.progressObserver = new Observable(()/*observer*/ =>
     {
       //this.progressSubscription = observer;
     });
 
     //Initialize the filesystem
-    this.fs = new WasmFs();
-    this.log('Initialized filesystem');
+    state.wasmFs = new WasmFs();
+    log('Initialized filesystem');
+
+    //Get bindings
+    const bindings = typeof process == 'object' ? node : browser;
 
     //Initialize WASI
-    this.wasi = new WASI({
+    state.wasi = new WASI({
       args: ['/cura-engine.wasm', ...args],
       env,
       bindings: {
-        ...browser,
-        fs: this.fs
+        ...bindings,
+        fs: state.wasmFs.fs
       },
     });
-    this.log('Initialized system interface');
+    log('Initialized system interface');
 
     //Load the WASM
-    this.source = await CuraEngine();
-    this.log('Loaded Cura Engine binary');
-
-    //Update imports
-    let imports = this.wasi.getImports(this.source.module);
-    imports = {
-      imports: {
+    const module = await CuraEngine();
+    state.instance = await WebAssembly.instantiate(module, {
+      ...state.wasi.getImports(module),
+      /*imports: {
         hello_javascript: () => 
         {
           console.log('HELLO!!!');
           alert('HELLO!!!');
         }
-      },
-      ...imports
-    };
+      }*/
+    });
+
+    log('Loaded Cura Engine binary');
 
     //Load files
     for (const [name, file] of Object.entries(files))
     {
-      this.fs.fs.writeFileSync(name, new Uint8Array(file), {
+      state.wasmFs.fs.writeFileSync(name, new Uint8Array(file), {
         encoding: 'binary'
       });
     }
-    this.log('Loaded files');
-  }
+    log('Loaded files');
+  },
 
-  getObservers(): [Observable<any>, Observable<any>]
+  getObservers: (): [Observable<any>, Observable<any>] =>
   {
     return [
-      this.metadataObserver!,
-      this.progressObserver!
+      state.metadataObserver!,
+      state.progressObserver!
     ];
-  }
+  },
 
-  async slice(outputLocation: string)
+  slice: async (outputLocation: string) =>
   {
     //Run Cura Engine
-    this.wasi!.start(this.source!.instance);
-    this.log('Ran Cura Engine');
+    state.wasi!.start(state.instance!);
+    log('Ran Cura Engine');
 
     //Read the output
-    const output = this.fs!.fs.readFileSync(outputLocation, {
+    const output = state.wasmFs!.fs.readFileSync(outputLocation, {
       encoding: 'binary'
     }) as Buffer;
-    this.log('Read output');
+    log('Read output');
 
     //Make the output transferable
     return Transfer(output);
-  }
+  },
 
-  async destroy()
+  destroy: async () =>
   {
     throw new Error('Not implemented!');
   }
-}
+} as AbstractWorker;
 
-//Instantiate the singleton
-const worker = new Worker();
+//Expose
+expose(worker);
 
 //Export
-expose(worker as any);
+export default '';

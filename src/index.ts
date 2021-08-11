@@ -4,8 +4,8 @@
 
 //Imports
 import {EventEmitter} from 'events';
-import WorkerText from '@worker';
 import {BlobWorker, ModuleThread, spawn, Thread} from 'threads';
+import WorkerText from './worker';
 import AbstractWorker from './abstract-worker';
 
 /**
@@ -16,7 +16,7 @@ class CuraWASM extends EventEmitter
   /**
    * Background worker thread
    */
-  private worker: ModuleThread<AbstractWorker> | undefined;
+  private thread: ModuleThread<AbstractWorker> | undefined;
 
   constructor()
   {
@@ -26,22 +26,22 @@ class CuraWASM extends EventEmitter
   async slice()
   {
     //Spawn the background worker
-    this.worker = await spawn<AbstractWorker>(BlobWorker.fromText(WorkerText));
+    this.thread = await spawn<AbstractWorker>(BlobWorker.fromText(WorkerText));
 
     //Initialize the worker
-    await this.worker.initialize(['help'], {}, {}, false);
+    await this.thread.initialize(['help'], {}, {}, true);
 
     //Get observers
     //const [metadataObserver, progressObserver] = await this.worker.getObservers();
 
     //Slice
-    /*const gcode = */await this.worker.slice('/output.stl');
+    /*const gcode = */await this.thread.slice('/output.stl');
 
     //Destroy
-    await this.worker.destroy();
+    await this.thread.destroy();
 
     //Terminate
-    await Thread.terminate(this.worker);
+    await Thread.terminate(this.thread);
   }
 }
 

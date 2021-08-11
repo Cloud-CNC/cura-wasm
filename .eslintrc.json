@@ -44,6 +44,7 @@
 		"prefer-const": "warn"
 	},
 	"env": {
+		"browser": true,
 		"node": true
 	}
 }

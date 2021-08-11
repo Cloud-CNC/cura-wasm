@@ -4,6 +4,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "outDir": "dist",
+    "resolveJsonModule": true,
 
     /* Declarations */
     "declaration": true,
@@ -27,12 +28,10 @@
 
     /* Advanced Options */
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    /* Path Alias */
-    "baseUrl": ".",
-    "paths": {
-      "@worker": ["./src/worker.ts"]
-    }
-  }
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "types.d.ts"
+  ]
 }

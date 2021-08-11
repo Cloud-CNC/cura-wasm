@@ -10,15 +10,7 @@ resolved = "https://registry-cdn.wapm.io/packages/cloud-cnc-bot/cura-engine/cura
 resolved_source = "registry+cura-engine"
 abi = "wasi"
 source = "cura-engine.wasm"
-[modules.cura-wasm."2.0.0-alpha.0".entry]
-name = "entry"
-package_version = "2.0.0-alpha.0"
-package_name = "cura-wasm"
-package_path = "cura-wasm@2.0.0-alpha.0"
-resolved = "local"
-resolved_source = "local"
-abi = "wasi"
-source = "entry.wasm"
+[modules.cura-wasm."2.0.0-alpha.0"]
 [commands.cura-engine]
 name = "cura-engine"
 package_name = "cloud-cnc-bot/cura-engine"
