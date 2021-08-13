@@ -3,7 +3,7 @@
  */
 
 //Imports
-import {Observable} from 'observable-fns';
+import {Subject} from 'observable-fns';
 import {TransferDescriptor} from 'threads';
 
 /**
@@ -26,10 +26,16 @@ interface AbstractWorker
   ): Promise<void>;
 
   /**
-   * Get observers
-   * @returns Metadata, progress observer
+   * Get metadata subject
+   * @returns Metadata subject
    */
-  getObservers(): [Observable<any>, Observable<any>];
+  getMetadata(): Subject<any>;
+
+  /**
+   * Get progress subject
+   * @returns Progress subject
+   */
+  getProgress(): Subject<any>;
 
   /**
    * Slice the file
@@ -37,11 +43,6 @@ interface AbstractWorker
    * @returns GCODE buffer
    */
   slice(outputLocation: string): Promise<TransferDescriptor<Buffer>>;
-
-  /**
-   * Destroy the background worker
-   */
-  destroy(): Promise<void>;
 
   [key: string]: any;
 }

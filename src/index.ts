@@ -31,14 +31,12 @@ class CuraWASM extends EventEmitter
     //Initialize the worker
     await this.thread.initialize(['help'], {}, {}, true);
 
-    //Get observers
-    //const [metadataObserver, progressObserver] = await this.worker.getObservers();
+    //Get subjects
+    // const metadata = this.thread.getMetadata();
+    // const progress = this.thread.getProgress();
 
     //Slice
     /*const gcode = */await this.thread.slice('/output.stl');
-
-    //Destroy
-    await this.thread.destroy();
 
     //Terminate
     await Thread.terminate(this.thread);

@@ -5,7 +5,7 @@
 //Imports
 import browser from '@wasmer/wasi/lib/bindings/browser';
 import node from '@wasmer/wasi/lib/bindings/node';
-import {Observable/*, SubscriptionObserver*/} from 'observable-fns';
+import {Subject} from 'observable-fns';
 import {WASI} from '@wasmer/wasi';
 import {WasmFs} from '@wasmer/wasmfs';
 import {expose, Transfer} from 'threads';
@@ -22,24 +22,14 @@ const state = {
   wasmFs: null as WasmFs | null,
 
   /**
-   * Metadata observer
+   * Print metadata observable
    */
-  metadataObserver: null as Observable<any> | null,
+  metadata: new Subject(),
 
   /**
-   * Metadata subscription
+   * Slicing progress observable
    */
-  //metadataSubscription: null as SubscriptionObserver<any> | null,
-
-  /**
-   * Progress observer
-   */
-  progressObserver: null as Observable<any> | null,
-
-  /**
-   * Progress subscription
-   */
-  //progressSubscription: null as SubscriptionObserver<any> | null,
+  progress: new Subject(),
 
   /**
    * Web Assembly instance
@@ -84,17 +74,6 @@ const worker = {
     //Update state
     state.verbose = verbose;
 
-    //Initialize the observers
-    state.metadataObserver = new Observable(()/*observer*/ =>
-    {
-      //this.metadataSubscription = observer;
-    });
-
-    state.progressObserver = new Observable(()/*observer*/ =>
-    {
-      //this.progressSubscription = observer;
-    });
-
     //Initialize the filesystem
     state.wasmFs = new WasmFs();
     log('Initialized filesystem');
@@ -111,22 +90,24 @@ const worker = {
         fs: state.wasmFs.fs
       },
     });
-    log('Initialized system interface');
+    log('Initialized WASI');
 
     //Load the WASM
     const module = await CuraEngine();
+    log('Loaded WASM');
+
+    //Instantiate the WASM module
     state.instance = await WebAssembly.instantiate(module, {
       ...state.wasi.getImports(module),
-      /*imports: {
-        hello_javascript: () => 
+      env: {
+        //TODO: remove
+        test_import: () => 
         {
-          console.log('HELLO!!!');
-          alert('HELLO!!!');
+          console.log('Test import fired!');
         }
-      }*/
+      }
     });
-
-    log('Loaded Cura Engine binary');
+    log('Instantiated WASM module');
 
     //Load files
     for (const [name, file] of Object.entries(files))
@@ -138,19 +119,15 @@ const worker = {
     log('Loaded files');
   },
 
-  getObservers: (): [Observable<any>, Observable<any>] =>
-  {
-    return [
-      state.metadataObserver!,
-      state.progressObserver!
-    ];
-  },
+  getMetadata: () => state.metadata,
+
+  getProgress: () => state.progress,
 
   slice: async (outputLocation: string) =>
   {
     //Run Cura Engine
     state.wasi!.start(state.instance!);
-    log('Ran Cura Engine');
+    log('Ran WASM');
 
     //Read the output
     const output = state.wasmFs!.fs.readFileSync(outputLocation, {
@@ -160,11 +137,6 @@ const worker = {
 
     //Make the output transferable
     return Transfer(output);
-  },
-
-  destroy: async () =>
-  {
-    throw new Error('Not implemented!');
   }
 } as AbstractWorker;
 
